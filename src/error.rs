@@ -87,7 +87,10 @@ impl From<uuid::Error> for Error {
 
 impl From<warp::Rejection> for Error {
     fn from(r: warp::Rejection) -> Error {
-        use warp::reject::*;
+        use warp::reject::{
+            InvalidHeader, InvalidQuery, LengthRequired, MethodNotAllowed, MissingCookie,
+            MissingHeader, PayloadTooLarge, UnsupportedMediaType,
+        };
 
         if r.is_not_found() {
             return Error::NotFound;
@@ -100,7 +103,7 @@ impl From<warp::Rejection> for Error {
         // Below are all the known `Rejection` reasons
         // (that are public)
 
-        if let Some(_) = r.find::<MethodNotAllowed>() {
+        if r.find::<MethodNotAllowed>().is_some() {
             return Error::MethodNotAllowed;
         }
 
@@ -125,19 +128,19 @@ impl From<warp::Rejection> for Error {
             );
         }
 
-        if let Some(_) = r.find::<InvalidQuery>() {
+        if r.find::<InvalidQuery>().is_some() {
             return Error::BadRequest;
         }
 
-        if let Some(_) = r.find::<LengthRequired>() {
+        if r.find::<LengthRequired>().is_some() {
             return Error::LengthRequired;
         }
 
-        if let Some(_) = r.find::<PayloadTooLarge>() {
+        if r.find::<PayloadTooLarge>().is_some() {
             return Error::ContentTooLarge;
         }
 
-        if let Some(_) = r.find::<UnsupportedMediaType>() {
+        if r.find::<UnsupportedMediaType>().is_some() {
             return Error::BadRequest;
         }
 

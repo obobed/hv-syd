@@ -10,7 +10,7 @@ async fn main() {
 
     initialise_folders().await;
 
-    warp::serve(satellite::router(config)).run(addr).await
+    warp::serve(satellite::router(config)).run(addr).await;
 }
 
 const CONFIG_PATH: &str = "config.toml";
