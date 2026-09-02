@@ -16,6 +16,7 @@ pub enum Error {
     ContentTooLarge,
     InternalServerError,
 
+    Unknown,
     Custom(StatusCode, String),
 }
 
@@ -33,6 +34,7 @@ impl std::fmt::Display for Error {
             Error::LengthRequired => write!(f, "length required"),
             Error::ContentTooLarge => write!(f, "content too large"),
             Error::InternalServerError => write!(f, "internal server error"),
+            Error::Unknown => write!(f, "unknown error"),
             Error::Custom(_, msg) => write!(f, "{}", msg),
         }
     }
@@ -68,6 +70,7 @@ impl From<Error> for StatusCode {
             Error::LengthRequired => StatusCode::LENGTH_REQUIRED,
             Error::ContentTooLarge => StatusCode::PAYLOAD_TOO_LARGE,
             Error::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
+            Error::Unknown => StatusCode::INTERNAL_SERVER_ERROR,
             Error::Custom(code, _) => code,
         }
     }
@@ -144,6 +147,6 @@ impl From<warp::Rejection> for Error {
             return Error::BadRequest;
         }
 
-        Error::InternalServerError
+        Error::Unknown
     }
 }
