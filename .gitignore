@@ -1,3 +1,7 @@
 /target
 /elm-stuff
-/.gram
+/assets
+/private
+/guide
+
+config.toml

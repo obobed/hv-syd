@@ -19,6 +19,7 @@ fn with_auth() -> impl Filter<Extract = (), Error = warp::Rejection> + Copy {
         .untuple_one()
 }
 
+/// All admin-related routes
 pub fn all() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path!("api" / "admin" / ..).and(
         login().or(with_auth().and(
