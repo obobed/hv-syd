@@ -1,9 +1,21 @@
 use uuid::Uuid;
-use warp::Filter;
+use warp::{
+    Filter,
+    reject::{self},
+};
 
+use crate::Error;
+
+/// Authentication filter
 fn with_auth() -> impl Filter<Extract = (), Error = warp::Rejection> + Copy {
     warp::cookie("admin-token")
-        .and_then(async |token: Uuid| -> Result<(), warp::Rejection> { todo!() })
+        // Token is deserialized into `String` first, otherwise if it tried to
+        // deserialize directly into `Uuid` and failed, it would reject with
+        // `MissingCookie`, which is unwanted in this case.
+        .and_then(async |token: String| -> Result<(), warp::Rejection> {
+            let token = Uuid::try_parse(&token).map_err(|e| reject::custom(Error::from(e)))?;
+            todo!()
+        })
         .untuple_one()
 }
 
