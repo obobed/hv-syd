@@ -2,7 +2,7 @@ use serde::ser::SerializeStruct as _;
 use warp::http::StatusCode;
 
 pub async fn handle_rejection(r: warp::Rejection) -> Result<impl warp::Reply, !> {
-    Ok(Error::from(r).into_response())
+    Ok(Error::from(r))
 }
 
 #[derive(Debug, Clone)]
@@ -51,9 +51,9 @@ impl serde::Serialize for Error {
     }
 }
 
-impl Error {
-    fn into_response(self) -> impl warp::Reply {
-        warp::reply::with_status(warp::reply::json(&self), self.into())
+impl warp::Reply for Error {
+    fn into_response(self) -> warp::reply::Response {
+        warp::reply::with_status(warp::reply::json(&self), self.into()).into_response()
     }
 }
 
