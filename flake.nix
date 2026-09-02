@@ -31,6 +31,7 @@
             toolchain.default.override {
               extensions = ["rust-src"];
             }))
+          zlib
         ];
       in {
         devShells.default = pkgs.mkShell {
