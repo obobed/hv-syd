@@ -3,5 +3,6 @@
 /assets
 /private
 /guide
+/tokens
 
 config.toml

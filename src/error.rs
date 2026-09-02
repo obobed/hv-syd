@@ -1,4 +1,8 @@
+#[cfg(debug_assertions)]
+use std::sync::Arc;
+
 use serde::ser::SerializeStruct as _;
+use sqlx::sqlite::SqliteConnectOptions;
 use warp::http::StatusCode;
 
 pub async fn handle_rejection(r: warp::Rejection) -> Result<impl warp::Reply, !> {
@@ -18,6 +22,10 @@ pub enum Error {
 
     Unknown,
     Custom(StatusCode, String),
+
+    // This variant only exists in debug, so `Arc` is fine right,,, surely
+    #[cfg(debug_assertions)]
+    DebugInternal(Arc<dyn core::error::Error + Sync + Send>),
 }
 
 impl warp::reject::Reject for Error {}
@@ -36,6 +44,9 @@ impl std::fmt::Display for Error {
             Error::InternalServerError => write!(f, "internal server error"),
             Error::Unknown => write!(f, "unknown error"),
             Error::Custom(_, msg) => write!(f, "{}", msg),
+
+            #[cfg(debug_assertions)]
+            Error::DebugInternal(msg) => write!(f, "{}", msg),
         }
     }
 }
@@ -72,6 +83,9 @@ impl From<Error> for StatusCode {
             Error::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
             Error::Unknown => StatusCode::INTERNAL_SERVER_ERROR,
             Error::Custom(code, _) => code,
+
+            #[cfg(debug_assertions)]
+            Error::DebugInternal(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }
@@ -148,5 +162,37 @@ impl From<warp::Rejection> for Error {
         }
 
         Error::Unknown
+    }
+}
+
+impl From<sqlx::Error> for Error {
+    fn from(value: sqlx::Error) -> Error {
+        #[cfg(not(debug_assertions))]
+        {
+            // Any and all database errors are internal server errors,
+            // but this means there is much loss of information,,,
+            Self::InternalServerError
+        }
+
+        #[cfg(debug_assertions)]
+        {
+            Self::DebugInternal(Arc::new(value))
+        }
+    }
+}
+
+impl From<heed::Error> for Error {
+    fn from(value: heed::Error) -> Error {
+        #[cfg(not(debug_assertions))]
+        {
+            // Any and all database errors are internal server errors,
+            // but this means there is much loss of information,,,
+            Self::InternalServerError
+        }
+
+        #[cfg(debug_assertions)]
+        {
+            Self::DebugInternal(Arc::new(value))
+        }
     }
 }

@@ -1,4 +1,6 @@
-use satellite::{Config, GUIDES_FOLDER, PRIVATE_ASSET_FOLDER, PUBLIC_ASSET_FOLDER};
+use satellite::{
+    Config, GUIDES_FOLDER, PRIVATE_ASSET_FOLDER, PUBLIC_ASSET_FOLDER, TOKENS_STORE_FOLDER,
+};
 use tokio::{fs, io};
 
 #[tokio::main]
@@ -38,6 +40,9 @@ async fn initialise_folders() {
         .await
         .expect("fs::create_dir_all");
     fs::create_dir_all(GUIDES_FOLDER)
+        .await
+        .expect("fs::create_dir_all");
+    fs::create_dir_all(TOKENS_STORE_FOLDER)
         .await
         .expect("fs::create_dir_all");
 }

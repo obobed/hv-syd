@@ -3,6 +3,7 @@ use std::sync::Arc;
 use warp::Filter;
 
 mod config;
+mod models;
 mod routes;
 mod state;
 
@@ -14,6 +15,7 @@ pub use error::Error;
 pub const PUBLIC_ASSET_FOLDER: &str = "assets";
 pub const PRIVATE_ASSET_FOLDER: &str = "private";
 pub const GUIDES_FOLDER: &str = "guides";
+pub const TOKENS_STORE_FOLDER: &str = "tokens";
 
 /// Literally every route
 pub fn router(config: Config) -> impl Filter<Extract = (impl warp::Reply,)> + Clone {

@@ -27,6 +27,8 @@
           llvmPackages_22.libclang
           llvmPackages_22.libllvm
 
+          lmdb
+
           (rust-bin.selectLatestNightlyWith (toolchain:
             toolchain.default.override {
               extensions = ["rust-src"];
