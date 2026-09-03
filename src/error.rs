@@ -1,3 +1,4 @@
+use core::error::Error as _;
 #[cfg(debug_assertions)]
 use std::sync::Arc;
 
@@ -118,6 +119,18 @@ impl From<warp::Rejection> for Error {
 
         // Below are all the known `Rejection` reasons
         // (that are public)
+
+        if let Some(e) = r.find::<warp::body::BodyDeserializeError>() {
+            return Error::Custom(
+                StatusCode::BAD_REQUEST,
+                format!(
+                    "failed to deserialize payload: {}",
+                    // source() is `Some(self.cause.as_ref())`
+                    e.source()
+                        .expect("warp changed something and bad things happened")
+                ),
+            );
+        }
 
         if r.find::<MethodNotAllowed>().is_some() {
             return Error::MethodNotAllowed;
