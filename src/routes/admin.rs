@@ -60,13 +60,12 @@ pub fn all(
     } = state;
 
     warp::path!("api" / "admin" / ..).and(
-        login::with_creds(
+        login::login(
             &config.admin.username,
             &config.admin.password,
             token_env,
             tokens,
         )
-        .or(login::with_token(token_env, tokens))
         .or(with_admin_auth(token_env, tokens).and(
             milestones()
                 .or(asset_create())
