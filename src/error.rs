@@ -2,7 +2,6 @@
 use std::sync::Arc;
 
 use serde::ser::SerializeStruct as _;
-use sqlx::sqlite::SqliteConnectOptions;
 use warp::http::StatusCode;
 
 pub async fn handle_rejection(r: warp::Rejection) -> Result<impl warp::Reply, !> {

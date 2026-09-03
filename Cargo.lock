@@ -1354,6 +1354,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "heed",
+ "log",
  "pretty_env_logger",
  "serde",
  "sqlx",

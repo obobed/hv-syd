@@ -1,28 +1,76 @@
+use chrono::Utc;
+use log::trace;
 use uuid::Uuid;
-use warp::{
-    Filter,
-    reject::{self},
+use warp::{Filter, reject};
+
+use crate::{
+    Error,
+    models::Level,
+    state::{State, TokenMap},
 };
 
-use crate::Error;
+mod login;
+mod token;
 
 /// Authentication filter
-fn with_auth() -> impl Filter<Extract = (), Error = warp::Rejection> + Copy {
+fn with_admin_auth(
+    token_env: &heed::Env,
+    tokens: &TokenMap,
+) -> impl Filter<Extract = (), Error = warp::Rejection> + Clone {
     warp::cookie("admin-token")
+        .and(with_tokens(token_env, tokens))
         // Token is deserialized into `String` first, otherwise if it tried to
         // deserialize directly into `Uuid` and failed, it would reject with
         // `MissingCookie`, which is unwanted in this case.
-        .and_then(async |token: String| -> Result<(), warp::Rejection> {
-            let token = Uuid::try_parse(&token).map_err(|e| reject::custom(Error::from(e)))?;
-            todo!()
+        .map(|token: String, _env, _tokens| -> Result<(), Error> {
+            trace!("client claims token: {token}");
+
+            let token = Uuid::try_parse(&token)?.to_string();
+            let rtxn = token_env.read_txn()?;
+            let metadata = match tokens.get(&rtxn, &token)? {
+                Some(m) => m,
+                None => return Err(Error::Forbidden),
+            };
+
+            if metadata.level != Level::Admin || metadata.exp < Utc::now() {
+                Err(Error::Forbidden)
+            } else {
+                Ok(())
+            }
         })
+        .and_then(async |res: Result<(), Error>| res.map_err(|e| reject::custom(e)))
+        .untuple_one()
+}
+
+fn with_tokens(
+    env: &heed::Env,
+    tokens: &TokenMap,
+) -> impl Filter<Extract = (heed::Env, TokenMap), Error = !> + Clone {
+    warp::any()
+        .map(|| (env.clone(), tokens.clone()))
         .untuple_one()
 }
 
 /// All admin-related routes
-pub fn all() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+pub fn all(
+    state: &State,
+) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+    let State {
+        config,
+        database_pool,
+        token_env,
+        tokens,
+    } = state;
+
     warp::path!("api" / "admin" / ..).and(
-        login().or(with_auth().and(
+        login::with_creds(
+            &config.admin.username,
+            &config.admin.password,
+            token_env,
+            tokens,
+        )
+        .or(login::with_token(token_env, tokens))
+        .or(with_admin_auth(token_env, tokens).and(
             milestones()
                 .or(asset_create())
                 .or(asset_delete())
@@ -37,9 +85,11 @@ pub fn all() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejecti
                 .or(teams())
                 .or(team_update())
                 .or(team_get())
-                .or(token_create())
-                .or(token_update())
-                .or(token_get()),
+                // Order here is important!! `token::list` MUST go on top.
+                .or(token::list(token_env, tokens))
+                .or(token::create(token_env, tokens))
+                .or(token::update(token_env, tokens))
+                .or(token::get(token_env, tokens)),
         )),
     )
 }
@@ -140,32 +190,4 @@ pub fn team_get() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Re
     warp::path!("team" / Uuid)
         .and(warp::get())
         .map(|id| todo!())
-}
-
-/// Provision a new token
-pub fn token_create() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone
-{
-    warp::path!("token" / "create")
-        .and(warp::post())
-        .map(|| todo!())
-}
-
-/// Update an admin token
-pub fn token_update() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone
-{
-    warp::path!("token" / Uuid)
-        .and(warp::put())
-        .map(|id| todo!())
-}
-
-/// Get status of a token
-pub fn token_get() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("token" / Uuid)
-        .and(warp::get())
-        .map(|id| todo!())
-}
-
-/// Login as an admin
-pub fn login() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("login").and(warp::post()).map(|| todo!())
 }

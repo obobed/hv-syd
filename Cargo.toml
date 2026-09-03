@@ -9,6 +9,7 @@ name = "satellite"
 [dependencies]
 chrono = { version = "0.4.45", default-features = false, features = ["core-error", "now", "serde"] }
 heed = { version = "0.22.1", default-features = false, features = ["serde", "serde-rmp"] }
+log = "0.4.34"
 pretty_env_logger = "0.5.0"
 serde = { version = "1.0.229", features = ["derive"] }
 sqlx = { version = "0.9.0", features = ["runtime-tokio", "sqlite-unbundled"] }

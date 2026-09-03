@@ -17,6 +17,8 @@ pub(crate) struct State {
     pub config: Config,
 
     pub database_pool: SqlitePool,
+
+    pub token_env: heed::Env,
     pub tokens: TokenMap,
 }
 
@@ -39,6 +41,8 @@ impl State {
         Ok(State {
             config,
             database_pool,
+
+            token_env,
             tokens,
         })
     }
