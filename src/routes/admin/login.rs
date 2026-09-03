@@ -18,17 +18,6 @@ enum LoginBody {
     Token { token: String },
 }
 
-#[derive(Serialize, Deserialize)]
-struct CredentialBody {
-    pub username: String,
-    pub password: String,
-}
-
-#[derive(Serialize, Deserialize)]
-struct TokenBody {
-    pub token: String,
-}
-
 pub fn login(
     username: &str,
     password: &str,
