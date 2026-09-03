@@ -121,14 +121,20 @@ impl From<warp::Rejection> for Error {
         // (that are public)
 
         if let Some(e) = r.find::<warp::body::BodyDeserializeError>() {
+            #[cfg(debug_assertions)]
             return Error::Custom(
                 StatusCode::BAD_REQUEST,
                 format!(
-                    "failed to deserialize payload: {}",
+                    "failed to deserialize body: {}",
                     // source() is `Some(self.cause.as_ref())`
                     e.source()
                         .expect("warp changed something and bad things happened")
                 ),
+            );
+            #[cfg(not(debug_assertions))]
+            return Error::Custom(
+                StatusCode::BAD_REQUEST,
+                format!("failed to deserialize body",),
             );
         }
 
