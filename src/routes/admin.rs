@@ -27,9 +27,8 @@ fn with_admin_auth(
 
             let token = Uuid::try_parse(&token)?.to_string();
             let rtxn = token_env.read_txn()?;
-            let metadata = match tokens.get(&rtxn, &token)? {
-                Some(m) => m,
-                None => return Err(Error::Forbidden),
+            let Some(metadata) = tokens.get(&rtxn, &token)? else {
+                return Err(Error::Forbidden);
             };
 
             if metadata.level != Level::Admin || metadata.exp < Utc::now() {
@@ -38,7 +37,7 @@ fn with_admin_auth(
                 Ok(())
             }
         })
-        .and_then(async |res: Result<(), Error>| res.map_err(|e| reject::custom(e)))
+        .and_then(async |res: Result<(), Error>| res.map_err(reject::custom))
         .untuple_one()
 }
 
@@ -46,9 +45,7 @@ fn with_tokens(
     env: &heed::Env,
     tokens: &TokenMap,
 ) -> impl Filter<Extract = (heed::Env, TokenMap), Error = !> + Clone {
-    warp::any()
-        .map(|| (env.clone(), tokens.clone()))
-        .untuple_one()
+    warp::any().map(|| (env.clone(), *tokens)).untuple_one()
 }
 
 /// All admin-related routes

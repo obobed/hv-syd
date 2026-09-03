@@ -68,9 +68,8 @@ pub fn with_token(
 
             let token = Uuid::try_parse(&body.token)?.to_string();
             let rtxn = token_env.read_txn()?;
-            let metadata = match tokens.get(&rtxn, &token)? {
-                Some(m) => m,
-                None => return Err(Error::Forbidden),
+            let Some(metadata) = tokens.get(&rtxn, &token)? else {
+                return Err(Error::Forbidden);
             };
 
             if metadata.level != Level::Admin || metadata.exp < Utc::now() {

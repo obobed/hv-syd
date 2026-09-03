@@ -57,9 +57,8 @@ pub fn update(
             let token = Uuid::try_parse(&token)?.to_string();
 
             let rtxn = token_env.read_txn()?;
-            let metadata = match tokens.get(&rtxn, &token)? {
-                Some(m) => m,
-                None => return Err(Error::NotFound),
+            let Some(metadata) = tokens.get(&rtxn, &token)? else {
+                return Err(Error::NotFound);
             };
             rtxn.commit()?;
 

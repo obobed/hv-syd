@@ -35,7 +35,7 @@ async fn token_cleanup_task() {
 
     loop {
         if let Err(e) = cleanup(state) {
-            log::error!("cleanup failed: {}", e)
+            log::error!("cleanup failed: {e}");
         }
         tokio::time::sleep(Duration::from_mins(5)).await;
     }
