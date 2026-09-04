@@ -1,41 +1,39 @@
 CREATE TABLE IF NOT EXISTS attendees (
     userId      TEXT  NOT NULL UNIQUE PRIMARY KEY,
-    teamId      TEXT,
+    teamName    TEXT,
     firstName   TEXT  NOT NULL,
     lastName    TEXT  NOT NULL,
     pwHash      TEXT  NOT NULL,
 
-    FOREIGN KEY(teamId) REFERENCES teams(teamId)
+    FOREIGN KEY(teamName) REFERENCES teams(teamName)
 );
 
 CREATE TABLE IF NOT EXISTS teams (
-    teamId      TEXT  NOT NULL UNIQUE PRIMARY KEY,
     teamName    TEXT  NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS submissions (
     subId           TEXT     NOT NULL UNIQUE PRIMARY KEY,
-    teamId          TEXT     NOT NULL,
+    teamName        TEXT     NOT NULL,
     milestone       TEXT     NOT NULL,
     description     TEXT,
     attachmentLink  TEXT,
     approved        BOOLEAN  NOT NULL DEFAULT FALSE,
 
-    FOREIGN KEY(teamId) REFERENCES teams(teamId)
+    FOREIGN KEY(teamName) REFERENCES teams(teamName)
 );
 
 CREATE INDEX IF NOT EXISTS ix_attendees ON attendees (
     userId,
-    teamId
+    teamName
 );
 
 CREATE INDEX IF NOT EXISTS ix_teams on teams (
-    teamId,
     teamName
 );
 
 CREATE INDEX IF NOT EXISTS ix_submissions ON submissions (
     subId,
-    teamId,
+    teamName,
     milestone
 );
