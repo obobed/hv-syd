@@ -115,7 +115,7 @@ pub fn asset_delete() -> impl Filter<Extract = (impl warp::Reply,), Error = warp
 
 // Get a private asset
 pub fn asset_get() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("asset")
+    warp::path!("asset" / ..)
         .and(warp::get())
         .and(warp::fs::dir(PRIVATE_ASSET_FOLDER))
 }
