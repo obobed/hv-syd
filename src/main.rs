@@ -20,10 +20,12 @@ async fn load_config() -> Config {
             Config::write_default(CONFIG_PATH)
                 .await
                 .expect("Config::write_default");
-            Config::load(CONFIG_PATH).await.expect("Config::load")
+            eprintln!("generated `config.toml`, please edit.");
+            std::process::exit(1)
         }
         Err(e) => {
-            panic!("Config::load: {e:?}");
+            eprintln!("while loading config: {e}");
+            std::process::exit(1)
         }
     }
 }

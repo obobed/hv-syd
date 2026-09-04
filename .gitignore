@@ -5,5 +5,5 @@
 /guide
 /tokens
 
-config.toml
-database.db
+/config.toml
+/database.db

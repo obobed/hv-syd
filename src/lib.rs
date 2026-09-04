@@ -22,9 +22,11 @@ static STATE: OnceLock<State> = OnceLock::new();
 
 /// Literally every route
 pub fn router(config: Config) -> impl Filter<Extract = (impl warp::Reply,)> + Clone {
-    let state = STATE.get_or_init(|| State::new(config).expect("State::new"));
-    tokio::spawn(token_cleanup_task(state));
     tokio::spawn(initialise_folders());
+
+    let state = STATE.get_or_init(|| State::new(config).expect("State::new"));
+
+    tokio::spawn(token_cleanup_task(state));
     tokio::spawn(initialise_db(state));
 
     routes::public_assets()
