@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS attendees (
     userId      INT   NOT NULL UNIQUE PRIMARY KEY,
-    teamId      INT   NOT NULL UNIQUE,
+    teamId      INT   UNIQUE,
     firstName   TEXT  NOT NULL,
     lastName    TEXT  NOT NULL,
     pwHash      TEXT  NOT NULL,
