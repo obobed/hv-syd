@@ -5,7 +5,10 @@ CREATE TABLE IF NOT EXISTS attendees (
     lastName    TEXT  NOT NULL,
     pwHash      TEXT  NOT NULL,
 
-    FOREIGN KEY(teamName) REFERENCES teams(teamName)
+    FOREIGN KEY(teamName)
+    REFERENCES teams(teamName)
+    ON UPDATE CASCADE
+    ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS teams (
@@ -20,7 +23,10 @@ CREATE TABLE IF NOT EXISTS submissions (
     attachmentLink  TEXT,
     approved        BOOLEAN  NOT NULL DEFAULT FALSE,
 
-    FOREIGN KEY(teamName) REFERENCES teams(teamName)
+    FOREIGN KEY(teamName)
+    REFERENCES teams(teamName)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS ix_attendees ON attendees (
