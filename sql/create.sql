@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS attendees (
     userId      TEXT  NOT NULL UNIQUE PRIMARY KEY,
-    teamId      TEXT  UNIQUE,
+    teamId      TEXT,
     firstName   TEXT  NOT NULL,
     lastName    TEXT  NOT NULL,
     pwHash      TEXT  NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS teams (
 
 CREATE TABLE IF NOT EXISTS submissions (
     subId           TEXT     NOT NULL UNIQUE PRIMARY KEY,
-    teamId          TEXT     NOT NULL UNIQUE,
+    teamId          TEXT     NOT NULL,
     milestone       TEXT     NOT NULL,
     description     TEXT,
     attachmentLink  TEXT,
