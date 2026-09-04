@@ -1,5 +1,6 @@
 use crate::state::State;
 use std::{sync::OnceLock, time::Duration};
+use tokio::fs;
 use warp::Filter;
 
 mod config;
@@ -22,7 +23,9 @@ static STATE: OnceLock<State> = OnceLock::new();
 /// Literally every route
 pub fn router(config: Config) -> impl Filter<Extract = (impl warp::Reply,)> + Clone {
     let state = STATE.get_or_init(|| State::new(config).expect("State::new"));
-    tokio::spawn(token_cleanup_task());
+    tokio::spawn(token_cleanup_task(state));
+    tokio::spawn(initialise_folders());
+    tokio::spawn(initialise_db(state));
 
     routes::public_assets()
         .or(routes::guides())
@@ -30,9 +33,7 @@ pub fn router(config: Config) -> impl Filter<Extract = (impl warp::Reply,)> + Cl
         .recover(error::handle_rejection)
 }
 
-async fn token_cleanup_task() {
-    let state = STATE.get().expect("state was not initialized");
-
+async fn token_cleanup_task(state: &State) {
     loop {
         if let Err(e) = cleanup(state) {
             log::error!("cleanup failed: {e}");
@@ -60,4 +61,26 @@ fn cleanup(state: &State) -> Result<(), Error> {
     wtxn.commit()?;
 
     Ok(())
+}
+
+async fn initialise_folders() {
+    fs::create_dir_all(PUBLIC_ASSET_FOLDER)
+        .await
+        .expect("fs::create_dir_all");
+    fs::create_dir_all(PRIVATE_ASSET_FOLDER)
+        .await
+        .expect("fs::create_dir_all");
+    fs::create_dir_all(GUIDES_FOLDER)
+        .await
+        .expect("fs::create_dir_all");
+    fs::create_dir_all(TOKENS_STORE_FOLDER)
+        .await
+        .expect("fs::create_dir_all");
+}
+
+async fn initialise_db(state: &State) {
+    sqlx::query_file!("sql/create.sql")
+        .execute(&state.database_pool)
+        .await
+        .expect("failed to create database");
 }

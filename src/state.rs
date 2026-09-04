@@ -2,13 +2,13 @@ use heed::{
     EnvOpenOptions,
     types::{SerdeRmp, Str},
 };
-use sqlx::{SqlitePool, pool::PoolOptions};
+use sqlx::{SqlitePool, pool::PoolOptions, sqlite::SqliteConnectOptions};
 
 use crate::{Config, Error, models::TokenMetadata};
 
 const MAX_DATABASE_CONNECTIONS: u32 = 32;
 const MIN_DATABASE_CONNECTIONS: u32 = 4;
-const DATABASE_URL: &str = "sqlite:todos.db";
+const DATABASE_PATH: &str = "database.db";
 const TOKEN_STORE_PATH: &str = "tokens";
 
 pub type TokenMap = heed::Database<Str, SerdeRmp<TokenMetadata>>;
@@ -24,10 +24,14 @@ pub(crate) struct State {
 
 impl State {
     pub(crate) fn new(config: Config) -> Result<State, Error> {
+        let options = SqliteConnectOptions::default()
+            .filename(DATABASE_PATH)
+            .create_if_missing(true);
+
         let database_pool = PoolOptions::new()
             .max_connections(MAX_DATABASE_CONNECTIONS)
             .min_connections(MIN_DATABASE_CONNECTIONS)
-            .connect_lazy(DATABASE_URL)?;
+            .connect_lazy_with(options);
 
         // SAFETY:
         //     - The `NO_LOCK` flag is not set.

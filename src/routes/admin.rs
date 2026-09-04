@@ -4,7 +4,7 @@ use uuid::Uuid;
 use warp::{Filter, reject};
 
 use crate::{
-    Error,
+    Error, PRIVATE_ASSET_FOLDER,
     models::Level,
     state::{State, TokenMap},
 };
@@ -81,7 +81,9 @@ pub fn all(
                 .or(teams())
                 .or(team_update())
                 .or(team_get())
-                // Order here is important!! `token::list` MUST go on top.
+                // Order here is important!! `token::list` MUST go on top,
+                // otherwise /token/list will be interpreted as 'list' being
+                // the token.
                 .or(token::list(token_env, tokens))
                 .or(token::create(token_env, tokens))
                 .or(token::update(token_env, tokens))
@@ -113,9 +115,9 @@ pub fn asset_delete() -> impl Filter<Extract = (impl warp::Reply,), Error = warp
 
 // Get a private asset
 pub fn asset_get() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("asset" / Uuid)
+    warp::path!("asset")
         .and(warp::get())
-        .map(|id| todo!())
+        .and(warp::fs::dir(PRIVATE_ASSET_FOLDER))
 }
 
 /// Fetch an overview of all? submissions

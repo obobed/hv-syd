@@ -1,7 +1,5 @@
-use satellite::{
-    Config, GUIDES_FOLDER, PRIVATE_ASSET_FOLDER, PUBLIC_ASSET_FOLDER, TOKENS_STORE_FOLDER,
-};
-use tokio::{fs, io};
+use satellite::Config;
+use tokio::io;
 
 #[tokio::main]
 async fn main() {
@@ -9,8 +7,6 @@ async fn main() {
 
     let config = load_config().await;
     let addr = config.general.address;
-
-    initialise_folders().await;
 
     warp::serve(satellite::router(config)).run(addr).await;
 }
@@ -24,25 +20,10 @@ async fn load_config() -> Config {
             Config::write_default(CONFIG_PATH)
                 .await
                 .expect("Config::write_default");
-            Config::load(CONFIG_PATH).await.unwrap()
+            Config::load(CONFIG_PATH).await.expect("Config::load")
         }
         Err(e) => {
             panic!("Config::load: {e:?}");
         }
     }
-}
-
-async fn initialise_folders() {
-    fs::create_dir_all(PUBLIC_ASSET_FOLDER)
-        .await
-        .expect("fs::create_dir_all");
-    fs::create_dir_all(PRIVATE_ASSET_FOLDER)
-        .await
-        .expect("fs::create_dir_all");
-    fs::create_dir_all(GUIDES_FOLDER)
-        .await
-        .expect("fs::create_dir_all");
-    fs::create_dir_all(TOKENS_STORE_FOLDER)
-        .await
-        .expect("fs::create_dir_all");
 }

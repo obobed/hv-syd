@@ -38,6 +38,7 @@
       in {
         devShells.default = pkgs.mkShell {
           LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath buildInputs}";
+          DATABASE_URL = "sqlite://dummy-database.db";
           buildInputs = buildInputs;
         };
       }
