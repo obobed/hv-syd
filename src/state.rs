@@ -44,6 +44,7 @@ impl State {
 
         Ok(State {
             config,
+
             database_pool,
 
             token_env,
