@@ -113,10 +113,10 @@ pub fn list(
             log::trace!("list tokens (GET /api/admin/token/list)");
 
             let rtxn = token_env.read_txn()?;
-            let out: Vec<TokenMetadata> = tokens
+            let out = tokens
                 .iter(&rtxn)?
-                .map(|v| v.map(|(_, v)| v))
-                .collect::<Result<Vec<TokenMetadata>, _>>()?;
+                .map(|v| v.map(|(k, v)| (k.to_string(), v)))
+                .collect::<Result<std::collections::HashMap<_, _>, _>>()?;
             rtxn.commit()?;
 
             Ok(warp::reply::json(&out))
