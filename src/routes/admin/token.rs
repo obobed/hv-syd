@@ -70,7 +70,13 @@ pub fn update(
                 &mut wtxn,
                 &token,
                 &TokenMetadata {
-                    exp: metadata.exp + body.add,
+                    exp: metadata
+                        .exp
+                        .checked_add_signed(body.add)
+                        .ok_or(Error::Custom(
+                            warp::http::StatusCode::BAD_REQUEST,
+                            "would overflow".into(),
+                        ))?,
                     ..metadata
                 },
             )?;
