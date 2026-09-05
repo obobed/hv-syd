@@ -9,6 +9,7 @@ use crate::{
     state::{State, TokenMap},
 };
 
+mod attendee;
 mod login;
 mod token;
 
@@ -75,9 +76,8 @@ pub fn all(
                 .or(submission_get())
                 .or(submission_create())
                 .or(submission_update())
-                .or(users())
-                .or(user_update())
-                .or(user_get())
+                .or(attendee::list(database_pool))
+                .or(attendee::update(database_pool))
                 .or(teams())
                 .or(team_update())
                 .or(team_get())
@@ -147,26 +147,6 @@ pub fn submission_update()
 -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path!("submission" / Uuid)
         .and(warp::put())
-        .map(|id| todo!())
-}
-
-/// Get a list of users
-pub fn users() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("users").and(warp::get()).map(|| todo!())
-}
-
-/// Update user details
-pub fn user_update() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone
-{
-    warp::path!("user" / Uuid)
-        .and(warp::put())
-        .map(|id| todo!())
-}
-
-/// Get user details
-pub fn user_get() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("user" / Uuid)
-        .and(warp::get())
         .map(|id| todo!())
 }
 

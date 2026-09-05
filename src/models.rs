@@ -12,7 +12,7 @@ pub struct TokenMetadata {
 #[serde(rename_all = "snake_case")]
 pub enum Level {
     Admin = 0,
-    User = 1,
+    Attendee = 1,
 }
 
 impl TokenMetadata {

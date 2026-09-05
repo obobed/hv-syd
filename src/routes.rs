@@ -2,7 +2,7 @@ use serde::de::DeserializeOwned;
 use warp::Filter;
 
 pub mod admin;
-pub mod user;
+pub mod attendee;
 
 const JSON_MAX_LENGTH_BYTES: u64 = 1024 * 64;
 

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS attendees (
-    userId      TEXT  NOT NULL UNIQUE PRIMARY KEY,
+    id          TEXT  NOT NULL UNIQUE PRIMARY KEY,
     teamName    TEXT,
     firstName   TEXT  NOT NULL,
     lastName    TEXT  NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS teams (
 );
 
 CREATE TABLE IF NOT EXISTS submissions (
-    subId           TEXT     NOT NULL UNIQUE PRIMARY KEY,
+    id              TEXT     NOT NULL UNIQUE PRIMARY KEY,
     teamName        TEXT     NOT NULL,
     milestone       TEXT     NOT NULL,
     description     TEXT,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS submissions (
 );
 
 CREATE INDEX IF NOT EXISTS ix_attendees ON attendees (
-    userId,
+    id,
     teamName
 );
 
@@ -39,7 +39,7 @@ CREATE INDEX IF NOT EXISTS ix_teams on teams (
 );
 
 CREATE INDEX IF NOT EXISTS ix_submissions ON submissions (
-    subId,
+    id,
     teamName,
     milestone
 );
