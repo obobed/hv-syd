@@ -12,6 +12,7 @@ use crate::{
 mod asset;
 mod attendee;
 mod login;
+mod submission;
 mod team;
 mod token;
 
@@ -67,9 +68,8 @@ pub fn all(
                 .or(asset::delete())
                 .or(asset::list())
                 .or(asset::get())
-                .or(submissions())
-                .or(submission_get())
-                .or(submission_update())
+                .or(submission::list(database_pool))
+                .or(submission::update(database_pool))
                 .or(attendee::list(database_pool))
                 .or(attendee::update(database_pool))
                 .or(team::list(database_pool))
@@ -89,26 +89,4 @@ pub fn all(
 /// Modify milestones
 pub fn milestones() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path!("milestones").and(warp::post()).map(|| todo!())
-}
-
-/// Fetch an overview of all? submissions
-pub fn submissions() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone
-{
-    warp::path!("submissions").and(warp::get()).map(|| todo!())
-}
-
-/// Get a submission
-pub fn submission_get()
--> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("submission" / Uuid)
-        .and(warp::get())
-        .map(|id| todo!())
-}
-
-/// Update a submission
-pub fn submission_update()
--> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("submission" / Uuid)
-        .and(warp::put())
-        .map(|id| todo!())
 }
