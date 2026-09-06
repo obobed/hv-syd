@@ -1,6 +1,5 @@
 use crate::state::State;
-use std::{sync::OnceLock, time::Duration};
-use tokio::fs;
+use std::{fs, sync::OnceLock, time::Duration};
 use warp::Filter;
 
 mod config;
@@ -22,7 +21,7 @@ static STATE: OnceLock<State> = OnceLock::new();
 
 /// Literally every route
 pub fn router(config: Config) -> impl Filter<Extract = (impl warp::Reply,)> + Clone {
-    tokio::spawn(initialise_folders());
+    initialise_folders();
 
     let state = STATE.get_or_init(|| State::new(config).expect("State::new"));
 
@@ -65,19 +64,11 @@ fn cleanup(state: &State) -> Result<(), Error> {
     Ok(())
 }
 
-async fn initialise_folders() {
-    fs::create_dir_all(PUBLIC_ASSET_FOLDER)
-        .await
-        .expect("fs::create_dir_all");
-    fs::create_dir_all(PRIVATE_ASSET_FOLDER)
-        .await
-        .expect("fs::create_dir_all");
-    fs::create_dir_all(GUIDES_FOLDER)
-        .await
-        .expect("fs::create_dir_all");
-    fs::create_dir_all(TOKENS_STORE_FOLDER)
-        .await
-        .expect("fs::create_dir_all");
+fn initialise_folders() {
+    fs::create_dir_all(PUBLIC_ASSET_FOLDER).expect("fs::create_dir_all");
+    fs::create_dir_all(PRIVATE_ASSET_FOLDER).expect("fs::create_dir_all");
+    fs::create_dir_all(GUIDES_FOLDER).expect("fs::create_dir_all");
+    fs::create_dir_all(TOKENS_STORE_FOLDER).expect("fs::create_dir_all");
 }
 
 async fn initialise_db(state: &State) {
