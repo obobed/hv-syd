@@ -1,7 +1,6 @@
-use core::error::Error as _;
 use std::io;
 #[cfg(debug_assertions)]
-use std::sync::Arc;
+use std::{error::Error as _, sync::Arc};
 
 use serde::ser::SerializeStruct as _;
 use warp::http::StatusCode;
@@ -121,8 +120,8 @@ impl From<warp::Rejection> for Error {
         // Below are all the known `Rejection` reasons
         // (that are public)
 
+        #[cfg(debug_assertions)]
         if let Some(e) = r.find::<warp::body::BodyDeserializeError>() {
-            #[cfg(debug_assertions)]
             return Error::Custom(
                 StatusCode::BAD_REQUEST,
                 format!(
@@ -132,7 +131,10 @@ impl From<warp::Rejection> for Error {
                         .expect("warp changed something and bad things happened")
                 ),
             );
-            #[cfg(not(debug_assertions))]
+        }
+
+        #[cfg(not(debug_assertions))]
+        if r.find::<warp::body::BodyDeserializeError>().is_some() {
             return Error::Custom(
                 StatusCode::BAD_REQUEST,
                 format!("failed to deserialize body",),
