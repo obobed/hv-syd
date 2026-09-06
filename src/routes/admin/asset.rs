@@ -36,7 +36,7 @@ pub fn delete() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reje
     warp::path!("asset" / ..)
         .and(warp::delete())
         .and(warp::path::tail())
-        .map(|tail: warp::path::Tail| -> Result<_, Error> {
+        .map(|tail: warp::path::Tail| {
             let Ok(tail) = percent_encoding::percent_decode_str(tail.as_str()).decode_utf8() else {
                 return Err(Error::NotFound);
             };

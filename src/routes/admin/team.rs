@@ -2,7 +2,7 @@ use log::trace;
 use serde::{Deserialize, Serialize};
 use sqlx::{Pool, Sqlite, types::Json};
 use uuid::Uuid;
-use warp::{Filter, reply::Reply as _};
+use warp::Filter;
 
 use crate::{Error, routes::json_body};
 
@@ -19,7 +19,7 @@ pub fn list(
     warp::path!("team" / "list")
         .and(warp::get())
         .map(|| db.clone())
-        .then(async |db| -> Result<warp::reply::Json, Error> {
+        .then(async |db| -> Result<_, Error> {
             trace!("get teams list (GET /api/admin/team/list)");
 
             let response = sqlx::query_file_as!(Team, "sql/team_names.sql")
@@ -52,7 +52,7 @@ pub fn get(
         .and(warp::get())
         .map(|name| (name, db.clone()))
         .untuple_one()
-        .then(async |name, db| -> Result<warp::reply::Json, Error> {
+        .then(async |name, db| -> Result<_, Error> {
             trace!("get team details (GET /api/admin/team/{})", name);
 
             let response = sqlx::query_file_as!(TeamDetails, "sql/team_details.sql", name)
@@ -78,10 +78,7 @@ pub fn update(
         .untuple_one()
         .and(json_body())
         .then(
-            async |name: String,
-                   db,
-                   body: UpdateTeamBody|
-                   -> Result<warp::reply::Response, Error> {
+            async |name: String, db, body: UpdateTeamBody| -> Result<_, Error> {
                 trace!("update team name (POST /api/admin/team/{})", name);
 
                 Uuid::try_parse(&name)?;
@@ -94,7 +91,7 @@ pub fn update(
                     .execute(&db)
                     .await?;
 
-                Ok(warp::reply::reply().into_response())
+                Ok(warp::reply::reply())
             },
         )
 }

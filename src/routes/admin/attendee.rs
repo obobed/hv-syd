@@ -2,7 +2,7 @@ use log::trace;
 use serde::{Deserialize, Serialize};
 use sqlx::{Pool, Sqlite};
 use uuid::Uuid;
-use warp::{Filter, reply::Reply as _};
+use warp::Filter;
 
 use crate::{Error, routes::json_body};
 
@@ -22,7 +22,7 @@ pub fn list(
     warp::path!("attendee" / "list")
         .and(warp::get())
         .map(|| db.clone())
-        .then(async |db| -> Result<warp::reply::Json, Error> {
+        .then(async |db| -> Result<_, Error> {
             trace!("get attendee list (GET /api/admin/attendees)");
 
             // Note: WILL NOT SCALE!! But considering the platform will probably
@@ -54,45 +54,39 @@ pub fn update(
         .map(|id| (id, db.clone()))
         .untuple_one()
         .and(json_body())
-        .then(
-            async |id: String,
-                   db,
-                   body: UpdateAttendeeBody|
-                   -> Result<warp::reply::Response, Error> {
-                Uuid::try_parse(&id)?;
-                trace!("update attendee details (POST /api/admin/team/{})", id);
+        .then(async |id: String, db, body: UpdateAttendeeBody| {
+            Uuid::try_parse(&id)?;
+            trace!("update attendee details (POST /api/admin/team/{})", id);
 
-                sqlx::query_scalar!("SELECT 1 FROM attendees WHERE id = ?", &id)
-                    .fetch_one(&db)
-                    .await?;
+            sqlx::query_scalar!("SELECT 1 FROM attendees WHERE id = ?", &id)
+                .fetch_one(&db)
+                .await?;
 
-                if body.team_name.is_none() && body.first_name.is_none() && body.last_name.is_none()
-                {
-                    return Err(Error::BadRequest);
-                }
+            if body.team_name.is_none() && body.first_name.is_none() && body.last_name.is_none() {
+                return Err(Error::BadRequest);
+            }
 
-                let mut builder = sqlx::QueryBuilder::new("UPDATE attendees SET ");
+            let mut builder = sqlx::QueryBuilder::new("UPDATE attendees SET ");
 
-                if let Some(team_name) = body.team_name {
-                    builder.push("teamName = ");
-                    builder.push_bind(team_name);
-                }
-                if let Some(first_name) = body.first_name {
-                    builder.push("firstName = ");
-                    builder.push_bind(first_name);
-                }
-                if let Some(last_name) = body.last_name {
-                    builder.push("lastName = ");
-                    builder.push_bind(last_name);
-                }
+            if let Some(team_name) = body.team_name {
+                builder.push("teamName = ");
+                builder.push_bind(team_name);
+            }
+            if let Some(first_name) = body.first_name {
+                builder.push("firstName = ");
+                builder.push_bind(first_name);
+            }
+            if let Some(last_name) = body.last_name {
+                builder.push("lastName = ");
+                builder.push_bind(last_name);
+            }
 
-                builder.push(" WHERE id = ");
-                builder.push_bind(id);
-                builder.push(";");
+            builder.push(" WHERE id = ");
+            builder.push_bind(id);
+            builder.push(";");
 
-                builder.build().execute(&db).await?;
+            builder.build().execute(&db).await?;
 
-                Ok(warp::reply::reply().into_response())
-            },
-        )
+            Ok(warp::reply::reply())
+        })
 }
