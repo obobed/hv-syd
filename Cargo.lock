@@ -1355,6 +1355,7 @@ dependencies = [
  "chrono",
  "heed",
  "log",
+ "percent-encoding",
  "pretty_env_logger",
  "serde",
  "sqlx",
