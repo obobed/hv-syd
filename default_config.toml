@@ -1,0 +1,12 @@
+[general]
+# The socket address to bind to.
+# A socket address must be of format
+# <ip-address>:<port>. IPv6 address must be
+# enclosed in square brackets ('[', ']').
+address = "0.0.0.0:8008"
+
+[admin]
+# The username for the admin account.
+username =
+# The password for the admin account.
+password =
