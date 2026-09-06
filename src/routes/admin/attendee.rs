@@ -66,6 +66,10 @@ pub fn update(
                     .fetch_one(&db)
                     .await?;
 
+                if body.teamName.is_none() && body.firstName.is_none() && body.lastName.is_none() {
+                    return Err(Error::BadRequest);
+                }
+
                 let mut builder = sqlx::QueryBuilder::new("UPDATE attendees SET ");
                 if let Some(team_name) = body.teamName {
                     builder.push("teamName = ");
