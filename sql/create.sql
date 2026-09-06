@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS teams (
 CREATE TABLE IF NOT EXISTS submissions (
     id              TEXT     NOT NULL UNIQUE PRIMARY KEY,
     teamName        TEXT     NOT NULL,
-    milestone       TEXT     NOT NULL,
+    milestone       INTEGER  NOT NULL,
     description     TEXT,
     attachmentLink  TEXT,
     approved        BOOLEAN  NOT NULL DEFAULT FALSE,
