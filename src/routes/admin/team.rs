@@ -68,12 +68,12 @@ struct UpdateTeamBody {
     team_name: String,
 }
 
-/// Update attendee details
+/// Update team details
 pub fn update(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path!("team" / String)
-        .and(warp::put().or(warp::post()).unify())
+        .and(warp::post())
         .map(|id| (id, db.clone()))
         .untuple_one()
         .and(json_body())
@@ -82,7 +82,7 @@ pub fn update(
                    db,
                    body: UpdateTeamBody|
                    -> Result<warp::reply::Response, Error> {
-                trace!("update team name (PUT/POST /api/admin/team/{})", name);
+                trace!("update team name (POST /api/admin/team/{})", name);
 
                 Uuid::try_parse(&name)?;
 
