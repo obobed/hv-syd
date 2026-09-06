@@ -120,23 +120,3 @@ pub fn submission_update()
         .and(warp::put())
         .map(|id| todo!())
 }
-
-/// Get a list of teams
-pub fn teams() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("teams").and(warp::get()).map(|| todo!())
-}
-
-/// Update team details
-pub fn team_update() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone
-{
-    warp::path!("team" / Uuid)
-        .and(warp::put())
-        .map(|id| todo!())
-}
-
-/// Get team details
-pub fn team_get() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("team" / Uuid)
-        .and(warp::get())
-        .map(|id| todo!())
-}
