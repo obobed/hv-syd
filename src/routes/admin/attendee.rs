@@ -38,11 +38,11 @@ pub fn list(
 }
 
 #[derive(Serialize, Deserialize)]
-#[allow(non_snake_case)]
+#[serde(rename_all = "camelCase")]
 struct UpdateAttendeeBody {
-    teamName: Option<String>,
-    firstName: Option<String>,
-    lastName: Option<String>,
+    team_name: Option<String>,
+    first_name: Option<String>,
+    last_name: Option<String>,
 }
 
 /// Update attendee details
@@ -66,21 +66,22 @@ pub fn update(
                     .fetch_one(&db)
                     .await?;
 
-                if body.teamName.is_none() && body.firstName.is_none() && body.lastName.is_none() {
+                if body.team_name.is_none() && body.first_name.is_none() && body.last_name.is_none()
+                {
                     return Err(Error::BadRequest);
                 }
 
                 let mut builder = sqlx::QueryBuilder::new("UPDATE attendees SET ");
 
-                if let Some(team_name) = body.teamName {
+                if let Some(team_name) = body.team_name {
                     builder.push("teamName = ");
                     builder.push_bind(team_name);
                 }
-                if let Some(first_name) = body.firstName {
+                if let Some(first_name) = body.first_name {
                     builder.push("firstName = ");
                     builder.push_bind(first_name);
                 }
-                if let Some(last_name) = body.lastName {
+                if let Some(last_name) = body.last_name {
                     builder.push("lastName = ");
                     builder.push_bind(last_name);
                 }
