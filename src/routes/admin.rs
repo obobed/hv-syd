@@ -4,13 +4,15 @@ use uuid::Uuid;
 use warp::{Filter, reject};
 
 use crate::{
-    Error, PRIVATE_ASSET_FOLDER,
+    Error,
     models::Level,
     state::{State, TokenMap},
 };
 
+mod asset;
 mod attendee;
 mod login;
+mod team;
 mod token;
 
 /// Authentication filter
@@ -69,18 +71,18 @@ pub fn all(
         )
         .or(with_admin_auth(token_env, tokens).and(
             milestones()
-                .or(asset_create())
-                .or(asset_delete())
-                .or(asset_get())
+                .or(asset::create())
+                .or(asset::delete())
+                .or(asset::list())
+                .or(asset::get())
                 .or(submissions())
                 .or(submission_get())
-                .or(submission_create())
                 .or(submission_update())
                 .or(attendee::list(database_pool))
                 .or(attendee::update(database_pool))
-                .or(teams())
-                .or(team_update())
-                .or(team_get())
+                .or(team::list(database_pool))
+                .or(team::update(database_pool))
+                .or(team::get(database_pool))
                 // Order here is important!! `token::list` MUST go on top,
                 // otherwise /token/list will be interpreted as 'list' being
                 // the token.
@@ -97,29 +99,6 @@ pub fn milestones() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::
     warp::path!("milestones").and(warp::post()).map(|| todo!())
 }
 
-/// Create a public asset
-pub fn asset_create() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone
-{
-    warp::path!("asset" / "create")
-        .and(warp::post())
-        .map(|| todo!())
-}
-
-/// Delete a public asset
-pub fn asset_delete() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone
-{
-    warp::path!("asset" / Uuid)
-        .and(warp::delete())
-        .map(|id| todo!())
-}
-
-// Get a private asset
-pub fn asset_get() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("asset" / ..)
-        .and(warp::get())
-        .and(warp::fs::dir(PRIVATE_ASSET_FOLDER))
-}
-
 /// Fetch an overview of all? submissions
 pub fn submissions() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone
 {
@@ -132,14 +111,6 @@ pub fn submission_get()
     warp::path!("submission" / Uuid)
         .and(warp::get())
         .map(|id| todo!())
-}
-
-/// Create a submission
-pub fn submission_create()
--> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("submission" / "create")
-        .and(warp::post())
-        .map(|| todo!())
 }
 
 /// Update a submission
