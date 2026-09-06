@@ -84,9 +84,9 @@ pub fn update(
                    -> Result<warp::reply::Response, Error> {
                 trace!("update team name (PUT/POST /api/admin/team/{})", name);
 
-                _ = Uuid::try_parse(&name)?;
+                Uuid::try_parse(&name)?;
 
-                _ = sqlx::query_scalar!("SELECT 1 FROM teams WHERE teamName = ?", &name)
+                sqlx::query_scalar!("SELECT 1 FROM teams WHERE teamName = ?", &name)
                     .fetch_one(&db)
                     .await?;
 
