@@ -21,11 +21,10 @@ fn with_admin_auth(
     tokens: &TokenMap,
 ) -> impl Filter<Extract = (), Error = warp::Rejection> + Clone {
     warp::cookie("admin-token")
-        .and(with_tokens(token_env, tokens))
         // Token is deserialized into `String` first, otherwise if it tried to
         // deserialize directly into `Uuid` and failed, it would reject with
         // `MissingCookie`, which is unwanted in this case.
-        .map(|token: String, _env, _tokens| -> Result<(), Error> {
+        .map(|token: String| -> Result<(), Error> {
             trace!("client claims token: {token}");
 
             let token = Uuid::try_parse(&token)?.to_string();
@@ -42,13 +41,6 @@ fn with_admin_auth(
         })
         .and_then(async |res: Result<(), Error>| res.map_err(reject::custom))
         .untuple_one()
-}
-
-fn with_tokens(
-    env: &heed::Env,
-    tokens: &TokenMap,
-) -> impl Filter<Extract = (heed::Env, TokenMap), Error = !> + Clone {
-    warp::any().map(|| (env.clone(), *tokens)).untuple_one()
 }
 
 /// All admin-related routes
