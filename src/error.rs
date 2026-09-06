@@ -1,4 +1,5 @@
 use core::error::Error as _;
+use std::io;
 #[cfg(debug_assertions)]
 use std::sync::Arc;
 
@@ -187,9 +188,11 @@ impl From<sqlx::Error> for Error {
     fn from(value: sqlx::Error) -> Error {
         #[cfg(not(debug_assertions))]
         {
-            // Any and all database errors are internal server errors,
-            // but this means there is much loss of information,,,
-            Self::InternalServerError
+            match value {
+                sqlx::Error::Io(e) => e.into(),
+                sqlx::Error::RowNotFound => Error::NotFound,
+                _ => Error::InternalServerError,
+            }
         }
 
         #[cfg(debug_assertions)]
@@ -203,14 +206,38 @@ impl From<heed::Error> for Error {
     fn from(value: heed::Error) -> Error {
         #[cfg(not(debug_assertions))]
         {
-            // Any and all database errors are internal server errors,
-            // but this means there is much loss of information,,,
-            Self::InternalServerError
+            match value {
+                heed::Error::Io(e) => e.into(),
+                heed::Error::Mdb(e) => match e {
+                    heed::MdbError::NotFound => Error::NotFound,
+                    _ => Error::InternalServerError,
+                },
+                _ => Error::InternalServerError,
+            }
         }
 
         #[cfg(debug_assertions)]
         {
             Self::DebugInternal(Arc::new(value))
+        }
+    }
+}
+
+impl From<io::Error> for Error {
+    fn from(value: io::Error) -> Error {
+        #[cfg(not(debug_assertions))]
+        {
+            // Any and all database errors are internal server errors,
+            // but this means there is much loss of information,,,
+            match value.kind() {
+                io::ErrorKind::NotFound => Error::NotFound,
+                _ => Error::InternalServerError,
+            }
+        }
+
+        #[cfg(debug_assertions)]
+        {
+            Error::DebugInternal(Arc::new(value))
         }
     }
 }
