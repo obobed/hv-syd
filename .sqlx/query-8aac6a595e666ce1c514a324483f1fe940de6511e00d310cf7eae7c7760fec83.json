@@ -1,0 +1,62 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT\n    id,\n    teamName as team_name,\n    firstName as first_name,\n    lastName as last_name\nFROM attendees;\n",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "attendees",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "name": "team_name",
+        "ordinal": 1,
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "attendees",
+            "name": "teamName"
+          }
+        }
+      },
+      {
+        "name": "first_name",
+        "ordinal": 2,
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "attendees",
+            "name": "firstName"
+          }
+        }
+      },
+      {
+        "name": "last_name",
+        "ordinal": 3,
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "attendees",
+            "name": "lastName"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "8aac6a595e666ce1c514a324483f1fe940de6511e00d310cf7eae7c7760fec83"
+}

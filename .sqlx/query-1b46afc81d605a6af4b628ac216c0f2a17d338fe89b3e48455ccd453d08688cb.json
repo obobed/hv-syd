@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT teamName as team_name FROM teams;\n",
+  "describe": {
+    "columns": [
+      {
+        "name": "team_name",
+        "ordinal": 0,
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "teams",
+            "name": "teamName"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "1b46afc81d605a6af4b628ac216c0f2a17d338fe89b3e48455ccd453d08688cb"
+}
