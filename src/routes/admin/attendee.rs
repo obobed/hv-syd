@@ -10,16 +10,16 @@ use crate::{Error, routes::json_body};
 #[allow(non_snake_case)]
 struct Attendee {
     id: String,
-    teamName: Option<String>,
-    firstName: String,
-    lastName: String,
+    team_name: Option<String>,
+    first_name: String,
+    last_name: String,
 }
 
 /// Get a list of users
 pub fn list(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("attendees")
+    warp::path!("attendee" / "list")
         .and(warp::get())
         .map(|| db.clone())
         .then(async |db| -> Result<warp::reply::Json, Error> {
@@ -29,12 +29,9 @@ pub fn list(
             // handle 200 attendees max, this shouldn't be an issue :3
             //
             // Just don't spam this endpoint,,
-            let response = sqlx::query_as!(
-                Attendee,
-                "SELECT id, teamName, firstName, lastName FROM attendees;"
-            )
-            .fetch_all(&db)
-            .await?;
+            let response = sqlx::query_file_as!(Attendee, "sql/attendees.sql")
+                .fetch_all(&db)
+                .await?;
 
             Ok(warp::reply::json(&response))
         })
@@ -63,11 +60,11 @@ pub fn update(
                    body: UpdateAttendeeBody|
                    -> Result<warp::reply::Response, Error> {
                 _ = Uuid::try_parse(&id)?;
+                trace!("update attendee details (PUT /api/admin/team/{})", id);
 
                 _ = sqlx::query_scalar!("SELECT 1 FROM attendees WHERE id = ?", &id)
                     .fetch_one(&db)
-                    .await
-                    .map_err(|_| Error::NotFound)?;
+                    .await?;
 
                 let mut builder = sqlx::QueryBuilder::new("UPDATE attendees SET ");
                 if let Some(team_name) = body.teamName {
