@@ -60,7 +60,7 @@ pub fn update(
                    body: UpdateAttendeeBody|
                    -> Result<warp::reply::Response, Error> {
                 _ = Uuid::try_parse(&id)?;
-                trace!("update attendee details (PUT /api/admin/team/{})", id);
+                trace!("update attendee details (PUT/POST /api/admin/team/{})", id);
 
                 _ = sqlx::query_scalar!("SELECT 1 FROM attendees WHERE id = ?", &id)
                     .fetch_one(&db)

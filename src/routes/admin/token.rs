@@ -1,4 +1,5 @@
 use chrono::TimeDelta;
+use log::trace;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use warp::{Filter, reply::Reply};
@@ -25,7 +26,7 @@ pub fn create(
         .and(warp::post())
         .and(json_body())
         .map(|body: CreateBody| -> Result<String, Error> {
-            log::trace!("create token (POST /api/admin/token/create)");
+            trace!("create token (POST /api/admin/token/create)");
 
             let metadata = TokenMetadata::new(body.level, body.valid_for);
             let id = Uuid::new_v4().to_string();
@@ -52,7 +53,7 @@ pub fn update(
         .and(warp::put())
         .and(json_body())
         .map(|token: String, body: UpdateBody| {
-            log::trace!("update token {} (POST /api/admin/token/{})", token, token);
+            trace!("update token {} (POST /api/admin/token/{})", token, token);
 
             let token = Uuid::try_parse(&token)?.to_string();
 

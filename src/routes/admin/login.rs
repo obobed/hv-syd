@@ -55,6 +55,8 @@ fn with_creds(
     token_env: &heed::Env,
     tokens: &TokenMap,
 ) -> Result<impl warp::Reply, Error> {
+    trace!("login with credentials (POST /api/admin/login)");
+
     if expected_username != given_username || expected_password != given_password {
         return Err(Error::Forbidden);
     }
