@@ -1,3 +1,5 @@
+#![recursion_limit = "256"]
+
 use crate::state::State;
 use std::{fs, sync::OnceLock, time::Duration};
 use warp::Filter;

@@ -1,3 +1,5 @@
+#![recursion_limit = "256"]
+
 use satellite::Config;
 use tokio::io;
 
