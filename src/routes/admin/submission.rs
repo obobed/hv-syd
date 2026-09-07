@@ -14,6 +14,8 @@ struct Submission {
     description: Option<String>,
     attachment: Option<String>,
     approved: bool,
+    /// Creation time, as a UNIX timestamp.
+    creation_time: i64,
 }
 
 /// Fetch an overview of all? submissions

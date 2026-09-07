@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "SELECT\n    id,\n    teamName AS team_name,\n    milestone,\n    description,\n    attachmentLink as attachment,\n    approved\nFROM submissions;\n",
+  "query": "SELECT\n    id,\n    teamName AS team_name,\n    milestone,\n    description,\n    attachmentLink as attachment,\n    approved,\n    creationTime as creation_time\nFROM submissions\nORDER BY creationTime DESC;\n",
   "describe": {
     "columns": [
       {
@@ -68,6 +68,17 @@
             "name": "approved"
           }
         }
+      },
+      {
+        "name": "creation_time",
+        "ordinal": 6,
+        "type_info": "Integer",
+        "origin": {
+          "Table": {
+            "table": "submissions",
+            "name": "creationTime"
+          }
+        }
       }
     ],
     "parameters": {
@@ -79,8 +90,9 @@
       false,
       true,
       true,
+      false,
       false
     ]
   },
-  "hash": "d3a485af62fa8fbc10c0b03d6ed38e761f56b2c3bbda2a1a7d75c5ea82870b39"
+  "hash": "224e711193f6514d8e35d407943e413778a67dd0e4218f7fbc9c22d94f7bf62d"
 }

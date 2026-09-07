@@ -4,5 +4,7 @@ SELECT
     milestone,
     description,
     attachmentLink as attachment,
-    approved
-FROM submissions;
+    approved,
+    creationTime as creation_time
+FROM submissions
+ORDER BY creationTime DESC;

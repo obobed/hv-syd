@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS submissions (
     description     TEXT,
     attachmentLink  TEXT,
     approved        BOOLEAN  NOT NULL DEFAULT FALSE,
+    creationTime    INTEGER  NOT NULL,
 
     FOREIGN KEY(teamName)
     REFERENCES teams(teamName)
