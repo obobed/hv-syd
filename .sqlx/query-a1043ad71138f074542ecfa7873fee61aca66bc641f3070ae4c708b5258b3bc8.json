@@ -1,0 +1,33 @@
+{
+  "db_name": "SQLite",
+  "query": "SELECT\n    json_group_array(\n        json_object(\n            'id', id,\n            'first_name', firstName,\n            'last_name', lastName\n        )\n    ) as \"attendees: _\",\n    teams.teamName as team_name\nFROM teams, attendees\nWHERE\n    teams.teamName = attendees.teamName AND\n    teams.teamName = $1\nGROUP BY teams.teamName;\n",
+  "describe": {
+    "columns": [
+      {
+        "name": "attendees: _",
+        "ordinal": 0,
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "name": "team_name",
+        "ordinal": 1,
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "teams",
+            "name": "teamName"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true,
+      false
+    ]
+  },
+  "hash": "a1043ad71138f074542ecfa7873fee61aca66bc641f3070ae4c708b5258b3bc8"
+}

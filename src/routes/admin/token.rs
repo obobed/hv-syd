@@ -95,7 +95,7 @@ pub fn get(
     warp::path!("token" / String)
         .and(warp::get())
         .map(|token: String| {
-            log::trace!("get token {} (GET /api/admin/token/{})", token, token);
+            trace!("get token {} (GET /api/admin/token/{})", token, token);
 
             let token = Uuid::try_parse(&token)?.to_string();
 
@@ -117,7 +117,7 @@ pub fn list(
     warp::path!("token" / "list")
         .and(warp::get())
         .map(|| -> Result<warp::reply::Json, Error> {
-            log::trace!("list tokens (GET /api/admin/token/list)");
+            trace!("list tokens (GET /api/admin/token/list)");
 
             let rtxn = token_env.read_txn()?;
             let out = tokens

@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "CREATE TABLE IF NOT EXISTS attendees (\n    id          TEXT  NOT NULL UNIQUE PRIMARY KEY,\n    teamName    TEXT,\n    firstName   TEXT  NOT NULL,\n    lastName    TEXT  NOT NULL,\n    pwHash      TEXT  NOT NULL,\n\n    FOREIGN KEY(teamName)\n    REFERENCES teams(teamName)\n    ON UPDATE CASCADE\n    ON DELETE SET NULL\n);\n\nCREATE TABLE IF NOT EXISTS teams (\n    teamName    TEXT  NOT NULL UNIQUE\n);\n\nCREATE TABLE IF NOT EXISTS submissions (\n    id              TEXT     NOT NULL UNIQUE PRIMARY KEY,\n    teamName        TEXT     NOT NULL,\n    milestone       INTEGER  NOT NULL,\n    description     TEXT,\n    attachmentLink  TEXT,\n    approved        BOOLEAN  NOT NULL DEFAULT FALSE,\n    creationTime    INTEGER  NOT NULL,\n\n    FOREIGN KEY(teamName)\n    REFERENCES teams(teamName)\n    ON UPDATE CASCADE\n    ON DELETE CASCADE\n\n    FOREIGN KEY(milestone)\n    REFERENCES milestones(id)\n    ON DELETE CASCADE\n);\n\nCREATE TABLE IF NOT EXISTS milestones (\n    id            INTEGER  NOT NULL UNIQUE PRIMARY KEY,\n    description   TEXT     NOT NULL,\n    requirements  TEXT     NOT NULL, -- Vec<String>\n    optional      BOOLEAN  NOT NULL\n);\n\nCREATE TABLE IF NOT EXISTS prizes (\n    prizeName         TEXT  NOT NULL UNIQUE PRIMARY KEY,\n    description       TEXT  NOT NULL,\n    image             TEXT,\n    participantNotes  TEXT, -- Option<Vec<String>>\n    stock             INTEGER,\n    milestone         INTEGER NOT NULL,\n\n    FOREIGN KEY(milestone)\n    REFERENCES milestones(id)\n    ON DELETE CASCADE\n);\n\nCREATE INDEX IF NOT EXISTS ix_attendees ON attendees (\n    id,\n    teamName\n);\n\nCREATE INDEX IF NOT EXISTS ix_teams on teams (\n    teamName\n);\n\nCREATE INDEX IF NOT EXISTS ix_submissions ON submissions (\n    id,\n    teamName,\n    milestone\n);\n\nCREATE INDEX IF NOT EXISTS ix_milestones ON milestones (\n    id\n);\n\nCREATE INDEX IF NOT EXISTS ix_prizes ON prizes (\n    prizeName,\n    milestone\n);\n",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": []
+  },
+  "hash": "1aba56ec9baa0000c8d7af3e8ffed266708e013f37fc705073a90dfda309c6c4"
+}

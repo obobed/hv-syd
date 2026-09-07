@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO prizes (\n    prizeName,\n    description,\n    image,\n    participantNotes,\n    stock,\n    milestone\n) VALUES ( $1, $2, $3, $4, $5, $6 );\n",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 6
+    },
+    "nullable": []
+  },
+  "hash": "90b66dc17c2ffb391f5e2a686b6cde8971dbbc6f5617c3de29a85cf88e9c3d8e"
+}

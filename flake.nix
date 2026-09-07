@@ -31,7 +31,6 @@
             toolchain.default.override {
               extensions = ["rust-src"];
             }))
-          mold
           zlib
         ];
       in {

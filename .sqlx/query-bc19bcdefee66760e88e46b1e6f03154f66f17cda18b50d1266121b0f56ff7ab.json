@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "DELETE FROM milestones",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": []
+  },
+  "hash": "bc19bcdefee66760e88e46b1e6f03154f66f17cda18b50d1266121b0f56ff7ab"
+}

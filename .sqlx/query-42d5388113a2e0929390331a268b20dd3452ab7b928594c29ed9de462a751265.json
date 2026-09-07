@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "UPDATE teams\nSET teamName = $1\nWHERE teamName = $2;\n",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "42d5388113a2e0929390331a268b20dd3452ab7b928594c29ed9de462a751265"
+}
