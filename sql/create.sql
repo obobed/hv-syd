@@ -27,6 +27,30 @@ CREATE TABLE IF NOT EXISTS submissions (
     REFERENCES teams(teamName)
     ON UPDATE CASCADE
     ON DELETE CASCADE
+
+    FOREIGN KEY(milestone)
+    REFERENCES milestones(id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS milestones (
+    id            INTEGER  NOT NULL UNIQUE PRIMARY KEY,
+    description   TEXT     NOT NULL,
+    requirements  TEXT     NOT NULL, -- Vec<String>
+    optional      BOOLEAN  NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS prizes (
+    prizeName         TEXT  NOT NULL UNIQUE PRIMARY KEY,
+    description       TEXT  NOT NULL,
+    image             TEXT,
+    participantNotes  TEXT, -- Option<Vec<String>>
+    stock             INTEGER,
+    milestone         INTEGER NOT NULL,
+
+    FOREIGN KEY(milestone)
+    REFERENCES milestones(id)
+    ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS ix_attendees ON attendees (
@@ -41,5 +65,14 @@ CREATE INDEX IF NOT EXISTS ix_teams on teams (
 CREATE INDEX IF NOT EXISTS ix_submissions ON submissions (
     id,
     teamName,
+    milestone
+);
+
+CREATE INDEX IF NOT EXISTS ix_milestones ON milestones (
+    id
+);
+
+CREATE INDEX IF NOT EXISTS ix_prizes ON prizes (
+    prizeName,
     milestone
 );

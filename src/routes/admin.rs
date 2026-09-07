@@ -12,6 +12,7 @@ use crate::{
 mod asset;
 mod attendee;
 mod login;
+mod milestone;
 mod submission;
 mod team;
 mod token;
@@ -63,7 +64,7 @@ pub fn all(
             tokens,
         )
         .or(with_admin_auth(token_env, tokens).and(
-            milestones()
+            milestone::set(database_pool)
                 .or(asset::create())
                 .or(asset::delete())
                 .or(asset::list())
@@ -84,9 +85,4 @@ pub fn all(
                 .or(token::get(token_env, tokens)),
         )),
     )
-}
-
-/// Modify milestones
-pub fn milestones() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("milestones").and(warp::post()).map(|| todo!())
 }
