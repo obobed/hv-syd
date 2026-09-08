@@ -3,13 +3,15 @@ use std::{io, process::ExitCode};
 
 use satellite::{Config, Error};
 
-async fn _main() -> Result<(), Error> {
+async fn __main() -> Result<(), Error> {
     pretty_env_logger::init();
 
     let config = load_config().await?;
     let addr = config.general.address;
 
-    Ok(warp::serve(satellite::router(config)?).run(addr).await)
+    warp::serve(satellite::router(config)?).run(addr).await;
+
+    Ok(())
 }
 
 const CONFIG_PATH: &str = "config.toml";
@@ -33,8 +35,8 @@ async fn load_config() -> Result<Config, Error> {
 
 #[tokio::main]
 async fn main() -> ExitCode {
-    match _main().await {
-        Ok(_) => ExitCode::SUCCESS,
+    match __main().await {
+        Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
             eprintln!("{}", e);
             ExitCode::FAILURE

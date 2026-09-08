@@ -127,8 +127,7 @@ impl From<warp::Rejection> for Error {
                 format!(
                     "failed to deserialize body: {}",
                     e.source()
-                        .map(ToString::to_string)
-                        .unwrap_or("unknown error".to_string())
+                        .map_or("unknown error".to_string(), ToString::to_string)
                 ),
             );
         }
