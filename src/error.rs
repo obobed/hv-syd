@@ -128,7 +128,8 @@ impl From<warp::Rejection> for Error {
                     "failed to deserialize body: {}",
                     // source() is `Some(self.cause.as_ref())`
                     e.source()
-                        .expect("warp changed something and bad things happened")
+                        .map(|e| e.to_string())
+                        .unwrap_or("unknown error".to_string())
                 ),
             );
         }
