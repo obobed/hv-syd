@@ -126,9 +126,8 @@ impl From<warp::Rejection> for Error {
                 StatusCode::BAD_REQUEST,
                 format!(
                     "failed to deserialize body: {}",
-                    // source() is `Some(self.cause.as_ref())`
                     e.source()
-                        .map(|e| e.to_string())
+                        .map(ToString::to_string)
                         .unwrap_or("unknown error".to_string())
                 ),
             );
