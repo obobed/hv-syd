@@ -69,7 +69,7 @@ pub fn list() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reject
             trace!("list public assets (GET /api/admin/list)");
 
             let out = fs::read_dir(PRIVATE_ASSET_FOLDER)?
-                .map(|e| -> Result<_, Error> { Ok(e?.file_name()) })
+                .map(|e| -> Result<_, Error> { Ok(e?.file_name().to_string_lossy().into_owned()) })
                 .collect::<Result<Vec<_>, _>>()?;
 
             Ok(warp::reply::json(&out))
