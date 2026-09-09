@@ -83,7 +83,7 @@ pub fn get() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejecti
         .and(warp::fs::dir(PRIVATE_ASSET_FOLDER))
         .map(|file: warp::filters::fs::File| {
             trace!(
-                "get public asset (DELETE /api/admin/asset/{})",
+                "get public asset (GET /api/admin/asset/{})",
                 file.path().to_string_lossy()
             );
 
