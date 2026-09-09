@@ -56,6 +56,7 @@ pub fn set(
                 sqlx::query_file!(
                     "sql/insert-milestone.sql",
                     i,
+                    milestone.name,
                     milestone.description,
                     serde_json::json!(milestone.requirements),
                     milestone.optional

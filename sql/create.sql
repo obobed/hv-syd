@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS submissions (
 
 CREATE TABLE IF NOT EXISTS milestones (
     id            INTEGER  NOT NULL UNIQUE PRIMARY KEY,
+    name          TEXT     NOT NULL,
     description   TEXT     NOT NULL,
     requirements  TEXT     NOT NULL, -- Vec<String>
     optional      BOOLEAN  NOT NULL
