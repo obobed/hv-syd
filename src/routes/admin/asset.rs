@@ -22,7 +22,7 @@ pub fn create() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reje
                 .join(body.filename.file_name().ok_or(Error::BadRequest)?);
 
             trace!(
-                "create public asset (DELETE /api/admin/asset/{})",
+                "create public asset (POST /api/admin/asset/{})",
                 filename.file_name().unwrap().to_string_lossy()
             );
 
