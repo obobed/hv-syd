@@ -52,6 +52,10 @@ pub fn delete() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reje
                 path.push(seg);
             }
 
+            if !path.exists() {
+                return Err(Error::NotFound);
+            }
+
             std::fs::remove_file(path)?;
             Ok(warp::reply())
         })
