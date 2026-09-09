@@ -90,3 +90,150 @@ pub fn get() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejecti
             file
         })
 }
+
+#[cfg(test)]
+mod test {
+    use super::{PRIVATE_ASSET_FOLDER, PUBLIC_ASSET_FOLDER, create, delete, get, list};
+    use rand::{
+        distr::{Alphanumeric, SampleString as _},
+        rng,
+    };
+    use serde_json::json;
+    use std::{
+        collections::HashMap,
+        fs,
+        path::{Path, PathBuf},
+    };
+    use warp::{http, test::request};
+
+    const TEST_FILE: (&[u8], &str) = (b"woof woof :3", "woof.txt");
+
+    /// Macro for simplifying setup operations that could fail
+    macro_rules! setup_assert {
+        ($lhs:expr) => {
+            if !($lhs) {
+                eprintln!("test failed due to system error, should retry.");
+                panic!();
+            }
+        };
+    }
+
+    fn make_test_path(base: impl AsRef<std::ffi::OsStr>) -> PathBuf {
+        PathBuf::from(&base).join(Alphanumeric.sample_string(&mut rng(), 6))
+    }
+
+    #[tokio::test]
+    async fn test_create() {
+        let test_file_path = make_test_path(PUBLIC_ASSET_FOLDER);
+        let payload = HashMap::from([
+            ("content", json!(TEST_FILE.0)),
+            (
+                "filename",
+                json!(
+                    test_file_path
+                        .file_name()
+                        .map(|p| p.to_string_lossy().into_owned())
+                        .unwrap()
+                ),
+            ),
+        ]);
+
+        _ = fs::remove_file(&test_file_path);
+        setup_assert!(!test_file_path.exists());
+
+        let res = request()
+            .path("/asset/create")
+            .method("POST")
+            .json(&payload)
+            .reply(&create())
+            .await;
+
+        assert_eq!(res.status(), http::StatusCode::OK);
+        assert!(test_file_path.exists());
+
+        setup_assert!(fs::remove_file(test_file_path).is_ok())
+    }
+
+    #[tokio::test]
+    async fn test_delete() {
+        let test_file_path = make_test_path(PUBLIC_ASSET_FOLDER);
+
+        setup_assert!(fs::write(&test_file_path, TEST_FILE.0).is_ok());
+        setup_assert!(test_file_path.exists());
+
+        let res = request()
+            .path(&format!(
+                "/asset/{}",
+                test_file_path
+                    .file_name()
+                    .map(|s| s.to_string_lossy().into_owned())
+                    .unwrap()
+            ))
+            .method("DELETE")
+            .reply(&delete())
+            .await;
+
+        assert_eq!(res.status(), http::StatusCode::OK);
+        assert!(!test_file_path.exists());
+    }
+
+    #[tokio::test]
+    async fn test_get() {
+        let test_file_path = make_test_path(PRIVATE_ASSET_FOLDER);
+
+        setup_assert!(fs::write(&test_file_path, TEST_FILE.0).is_ok());
+        setup_assert!(test_file_path.exists());
+
+        let res = request()
+            .path(&format!(
+                "/asset/{}",
+                test_file_path.file_name().unwrap().to_string_lossy()
+            ))
+            .method("GET")
+            .reply(&get())
+            .await;
+
+        setup_assert!(fs::remove_file(&test_file_path).is_ok());
+
+        assert_eq!(res.status(), http::StatusCode::OK);
+        assert_eq!(res.into_body(), TEST_FILE.0);
+    }
+
+    #[tokio::test]
+    async fn test_list() {
+        let test_file_paths = (0..5)
+            .map(|_| make_test_path(PRIVATE_ASSET_FOLDER))
+            .collect::<Vec<_>>();
+
+        for p in test_file_paths.iter() {
+            setup_assert!(fs::write(&p, TEST_FILE.0).is_ok());
+            setup_assert!(Path::new(&p).exists());
+        }
+
+        // TODO: Somehow this makes the files created from tests above get deleted
+        // before it lists
+        tokio::time::sleep(tokio::time::Duration::from_millis(0)).await;
+
+        let mut res = request()
+            .path("/asset/list")
+            .method("GET")
+            .reply(&list())
+            .await
+            .map(|b| serde_json::from_slice::<Vec<String>>(&b).unwrap());
+        res.body_mut().sort();
+
+        for p in test_file_paths.iter() {
+            setup_assert!(fs::remove_file(&p).is_ok());
+            setup_assert!(!Path::new(&p).exists());
+        }
+
+        let mut rhs = test_file_paths
+            .into_iter()
+            .map(|p| p.file_name().unwrap().to_string_lossy().into_owned())
+            .collect::<Vec<_>>();
+        rhs.sort();
+
+        assert_eq!(res.status(), http::StatusCode::OK);
+        assert_eq!(res.into_body(), rhs);
+    }
+}
