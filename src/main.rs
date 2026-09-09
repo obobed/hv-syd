@@ -22,12 +22,12 @@ async fn load_config() -> Result<Config, Error> {
         Err(e) if e.kind() == io::ErrorKind::NotFound => {
             Config::write_default(CONFIG_PATH).await?;
             Err(Error::Custom(
-                413.try_into().unwrap(),
+                418.try_into().unwrap(),
                 "generated `config.toml`, please edit.".into(),
             ))
         }
         Err(e) => Err(Error::Custom(
-            413.try_into().unwrap(),
+            418.try_into().unwrap(),
             format!("loading config failed: {}", e),
         )),
     }
