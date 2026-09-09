@@ -103,10 +103,13 @@ mod test {
         collections::HashMap,
         fs,
         path::{Path, PathBuf},
+        sync::Mutex,
     };
     use warp::{http, test::request};
 
     const TEST_FILE: (&[u8], &str) = (b"woof woof :3", "woof.txt");
+
+    static PRIVATE_DIR_LOCK: Mutex<u8> = Mutex::new(0);
 
     /// Macro for simplifying setup operations that could fail
     macro_rules! setup_assert {
@@ -181,6 +184,8 @@ mod test {
     async fn test_get() {
         let test_file_path = make_test_path(PRIVATE_ASSET_FOLDER);
 
+        let guard = PRIVATE_DIR_LOCK.lock().unwrap();
+
         setup_assert!(fs::write(&test_file_path, TEST_FILE.0).is_ok());
         setup_assert!(test_file_path.exists());
 
@@ -195,6 +200,8 @@ mod test {
 
         setup_assert!(fs::remove_file(&test_file_path).is_ok());
 
+        drop(guard);
+
         assert_eq!(res.status(), http::StatusCode::OK);
         assert_eq!(res.into_body(), TEST_FILE.0);
     }
@@ -205,14 +212,12 @@ mod test {
             .map(|_| make_test_path(PRIVATE_ASSET_FOLDER))
             .collect::<Vec<_>>();
 
+        let guard = PRIVATE_DIR_LOCK.lock().unwrap();
+
         for p in test_file_paths.iter() {
             setup_assert!(fs::write(&p, TEST_FILE.0).is_ok());
             setup_assert!(Path::new(&p).exists());
         }
-
-        // TODO: Somehow this makes the files created from tests above get deleted
-        // before it lists
-        tokio::time::sleep(tokio::time::Duration::from_millis(0)).await;
 
         let mut res = request()
             .path("/asset/list")
@@ -220,12 +225,15 @@ mod test {
             .reply(&list())
             .await
             .map(|b| serde_json::from_slice::<Vec<String>>(&b).unwrap());
+
         res.body_mut().sort();
 
         for p in test_file_paths.iter() {
             setup_assert!(fs::remove_file(&p).is_ok());
             setup_assert!(!Path::new(&p).exists());
         }
+
+        drop(guard);
 
         let mut rhs = test_file_paths
             .into_iter()
