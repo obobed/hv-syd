@@ -22,7 +22,7 @@ pub fn list(
         .then(async |db| -> Result<_, Error> {
             trace!("get teams list (GET /api/admin/team/list)");
 
-            let response = sqlx::query_file_as!(Team, "sql/team_names.sql")
+            let response = sqlx::query_file_as!(Team, "sql/team-names.sql")
                 .fetch_all(&db)
                 .await?;
 
@@ -55,7 +55,7 @@ pub fn get(
         .then(async |name, db| -> Result<_, Error> {
             trace!("get team details (GET /api/admin/team/{})", name);
 
-            let response = sqlx::query_file_as!(TeamDetails, "sql/team_details.sql", name)
+            let response = sqlx::query_file_as!(TeamDetails, "sql/team-details.sql", name)
                 .fetch_one(&db)
                 .await?;
 
@@ -87,7 +87,7 @@ pub fn update(
                     .fetch_one(&db)
                     .await?;
 
-                sqlx::query_file!("sql/update_team_name.sql", body.team_name, name)
+                sqlx::query_file!("sql/update-team-name.sql", body.team_name, name)
                     .execute(&db)
                     .await?;
 

@@ -54,7 +54,7 @@ pub fn set(
                 let i = i64::try_from(i).map_err(|_| Error::BadRequest)?;
 
                 sqlx::query_file!(
-                    "sql/insert_milestone.sql",
+                    "sql/insert-milestone.sql",
                     i,
                     milestone.description,
                     serde_json::json!(milestone.requirements),
@@ -65,7 +65,7 @@ pub fn set(
 
                 for prize in milestone.prizes {
                     sqlx::query_file!(
-                        "sql/insert_prize.sql",
+                        "sql/insert-prize.sql",
                         prize.name,
                         prize.description,
                         prize.image,

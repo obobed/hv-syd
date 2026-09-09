@@ -18,11 +18,12 @@ pub fn create() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reje
         .and(warp::post())
         .and(json_body())
         .then(async |body: CreateAssetBody| -> Result<_, Error> {
-            let filename = body.filename.file_name().ok_or(Error::BadRequest)?;
+            let filename = PathBuf::from(PUBLIC_ASSET_FOLDER)
+                .join(body.filename.file_name().ok_or(Error::BadRequest)?);
 
             trace!(
-                "create public asset (DELETE /api/admin/asset/{})",
-                filename.to_string_lossy()
+                "create public asset (POST /api/admin/asset/{})",
+                filename.file_name().unwrap().to_string_lossy()
             );
 
             tokio::fs::write(filename, body.content).await?;

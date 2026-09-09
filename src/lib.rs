@@ -1,8 +1,7 @@
-#![recursion_limit = "256"]
+use std::{fs, thread, time::Duration};
+use warp::Filter;
 
 use crate::state::State;
-use std::{fs, sync::OnceLock, time::Duration};
-use warp::Filter;
 
 mod config;
 mod models;
@@ -19,29 +18,27 @@ pub const PRIVATE_ASSET_FOLDER: &str = "private";
 pub const GUIDES_FOLDER: &str = "guides";
 pub const TOKENS_STORE_FOLDER: &str = "tokens";
 
-static STATE: OnceLock<State> = OnceLock::new();
-
 /// Literally every route
-pub fn router(config: Config) -> impl Filter<Extract = (impl warp::Reply,)> + Clone {
-    initialise_folders();
+pub fn router(config: Config) -> Result<impl Filter<Extract = (impl warp::Reply,)> + Clone, Error> {
+    initialise_folders()?;
 
-    let state = STATE.get_or_init(|| State::new(config).expect("State::new"));
+    let state = Box::leak(Box::new(State::new(config)?));
 
-    tokio::spawn(token_cleanup_task(state));
-    tokio::spawn(initialise_db(state));
+    initialise_db(state)?;
+    thread::spawn(|| token_cleanup_task(state));
 
-    routes::public_assets()
+    Ok(routes::public_assets()
         .or(routes::guides())
         .or(routes::admin::all(state))
-        .recover(error::handle_rejection)
+        .recover(error::handle_rejection))
 }
 
-async fn token_cleanup_task(state: &State) {
+fn token_cleanup_task(state: &State) {
     loop {
         if let Err(e) = cleanup(state) {
             log::error!("cleanup failed: {e}");
         }
-        tokio::time::sleep(Duration::from_mins(5)).await;
+        thread::sleep(Duration::from_mins(5));
     }
 }
 
@@ -66,16 +63,19 @@ fn cleanup(state: &State) -> Result<(), Error> {
     Ok(())
 }
 
-fn initialise_folders() {
-    fs::create_dir_all(PUBLIC_ASSET_FOLDER).expect("fs::create_dir_all");
-    fs::create_dir_all(PRIVATE_ASSET_FOLDER).expect("fs::create_dir_all");
-    fs::create_dir_all(GUIDES_FOLDER).expect("fs::create_dir_all");
-    fs::create_dir_all(TOKENS_STORE_FOLDER).expect("fs::create_dir_all");
+fn initialise_folders() -> Result<(), Error> {
+    fs::create_dir_all(PUBLIC_ASSET_FOLDER)?;
+    fs::create_dir_all(PRIVATE_ASSET_FOLDER)?;
+    fs::create_dir_all(GUIDES_FOLDER)?;
+    fs::create_dir_all(TOKENS_STORE_FOLDER)?;
+    Ok(())
 }
 
-async fn initialise_db(state: &State) {
-    sqlx::query_file!("sql/create.sql")
-        .execute(&state.database_pool)
-        .await
-        .expect("failed to create database");
+fn initialise_db(state: &State) -> Result<(), Error> {
+    pollster::block_on(async {
+        sqlx::query_file!("sql/create.sql")
+            .execute(&state.database_pool)
+            .await?;
+        Ok(())
+    })
 }
