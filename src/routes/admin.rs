@@ -1,5 +1,6 @@
 use chrono::Utc;
 use log::trace;
+use utoipa::OpenApi;
 use uuid::Uuid;
 use warp::{Filter, reject};
 
@@ -17,6 +18,9 @@ mod prize;
 mod submission;
 mod team;
 mod token;
+
+#[derive(OpenApi)]
+pub struct AdminApiDoc;
 
 /// Authentication filter
 fn with_admin_auth(
