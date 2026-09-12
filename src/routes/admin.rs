@@ -100,7 +100,7 @@ pub fn all(
         attendee::list,
         attendee::update,
     ),
-    security(("admin-api-key" = ["read:admin", "write:admin"])),
+    security(("admin-token" = ["read:admin", "write:admin"])),
     modifiers(&SecurityDetails)
 )]
 pub struct AdminApiDoc;
@@ -115,8 +115,8 @@ impl utoipa::Modify for SecurityDetails {
             use utoipa::openapi::security::{ApiKey, ApiKeyValue, SecurityScheme};
 
             components.add_security_scheme(
-                "admin-api-key",
-                SecurityScheme::ApiKey(ApiKey::Cookie(ApiKeyValue::new("api-key"))),
+                "admin-token",
+                SecurityScheme::ApiKey(ApiKey::Cookie(ApiKeyValue::new("admin-token"))),
             );
         } else {
             panic!("Failed to add api-key details: unable to get openapi components");
