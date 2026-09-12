@@ -19,9 +19,6 @@ pub use error::Error;
     nest(
         (path = "/api/admin", api = routes::admin::AdminApiDoc),
     ),
-    tags(
-        (name = "admin", description = "System management api")
-    )
 )]
 pub struct OpenApiDoc;
 
