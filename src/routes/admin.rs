@@ -120,6 +120,7 @@ pub struct AdminApiDoc;
         attendee::list,
         attendee::update,
         login::login,
+        milestone::set,
     ),
     security(("admin-token" = ["read:admin", "write:admin"])),
     modifiers(&SecurityDetails)

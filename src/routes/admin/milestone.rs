@@ -9,6 +9,16 @@ type Milestones = Vec<Milestone>;
 /// Set milestones and prizes
 ///
 /// Note: This deletes all existing milestones and prizes!
+#[cfg_attr(feature = "openapi", utoipa::path(
+    put,
+    path = "/milestones/set",
+    request_body = Vec<Milestone>,
+    responses(
+        (status = 200, description = "Successfully set milestones & prizes."),
+        (status = 400, description = "Too many milestones (> 9223372036854775807)"),
+        (status = 500, description = "An internal database or IO error occured.")
+    ),
+))]
 pub fn set(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {

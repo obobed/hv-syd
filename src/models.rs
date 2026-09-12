@@ -12,6 +12,7 @@ pub struct Attendee {
 }
 
 #[derive(Serialize, Deserialize)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 pub struct Milestone {
     pub name: String,
     pub description: String,
@@ -21,6 +22,7 @@ pub struct Milestone {
 }
 
 #[derive(Serialize, Deserialize)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 pub struct Prize {
     pub name: String,
     pub description: String,
