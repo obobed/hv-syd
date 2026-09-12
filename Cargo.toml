@@ -7,9 +7,13 @@ default-run = "satellite-platform"
 [[bin]]
 name = "gen-openapi"
 path = "./src/api_docgen.rs"
+required-features = ["openapi"]
 
 [lib]
 name = "satellite"
+
+[features]
+openapi = ["dep:utoipa"]
 
 [dependencies]
 chrono = { version = "0.4.45", default-features = false, features = ["core-error", "now", "serde"] }
@@ -27,7 +31,7 @@ serde_json = "1.0.151"
 sqlx = { version = "0.9.0", features = ["json", "runtime-tokio", "sqlite"] }
 tokio = { version = "1.53.1", features = ["macros", "parking_lot", "rt-multi-thread"] }
 toml = "1.1.4"
-utoipa = { version = "5.5.0", features = ["uuid"] }
+utoipa = { version = "5.5.0", features = ["uuid"], optional = true }
 uuid = { version = "1.26.0", features = ["serde", "v4"], default-features = false }
 warp = { version = "0.4.3", features = ["compression", "server"] }
 
