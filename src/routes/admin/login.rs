@@ -13,11 +13,33 @@ use crate::{
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "snake_case", untagged)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 enum LoginBody {
+    #[cfg_attr(feature = "openapi", schema(title = "Credentials"))]
     Credential { username: String, password: String },
-    Token { token: String },
+    #[cfg_attr(feature = "openapi", schema(title = "Token"))]
+    Token {
+        #[cfg_attr(feature = "openapi", schema(value_type = Uuid))]
+        token: String,
+    },
 }
 
+/// Login as an admin.
+///
+/// Instructs the browser to set the `admin-token` cookie. If logging in with
+/// credentials, this will create a new token. If logging in with a token, this
+/// will just send the same token, but with the correct `Set-Cookie` header.
+#[cfg_attr(feature = "openapi", utoipa::path(
+    post,
+    path = "/login",
+    request_body = LoginBody,
+    responses(
+        (status = 200, description = "Successfully logged in."),
+        (status = 403, description = "Invalid credentials or token."),
+        (status = 500, description = "An internal database error occured.")
+    ),
+    security(()),
+))]
 pub fn login(
     username: &str,
     password: &str,

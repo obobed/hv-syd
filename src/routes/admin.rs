@@ -99,6 +99,7 @@ pub fn all(
         asset::list,
         attendee::list,
         attendee::update,
+        login::login,
     ),
     security(("admin-token" = ["read:admin", "write:admin"])),
     modifiers(&SecurityDetails)
