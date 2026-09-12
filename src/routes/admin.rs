@@ -1,6 +1,5 @@
 use chrono::Utc;
 use log::trace;
-use utoipa::OpenApi;
 use uuid::Uuid;
 use warp::{Filter, reject};
 
@@ -19,7 +18,9 @@ mod submission;
 mod team;
 mod token;
 
-#[derive(OpenApi)]
+#[cfg(feature = "openapi")]
+#[derive(utoipa::OpenApi)]
+#[openapi(paths(asset::create, asset::delete, asset::get, asset::list,))]
 pub struct AdminApiDoc;
 
 /// Authentication filter

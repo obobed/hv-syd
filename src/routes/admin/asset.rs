@@ -7,12 +7,32 @@ use warp::Filter;
 use crate::{Error, PRIVATE_ASSET_FOLDER, PUBLIC_ASSET_FOLDER, routes::json_body};
 
 #[derive(Serialize, Deserialize)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 struct CreateAssetBody {
+    #[cfg_attr(feature = "openapi", schema(examples(0)))]
     content: Vec<u8>,
+    #[cfg_attr(feature = "openapi", schema(
+        value_type = String,
+        examples("icon.svg")
+    ))]
     filename: PathBuf,
 }
 
 /// Create a public asset
+///
+/// Accepts file content and writes it to a file on disk, in the "assets/"
+/// folder. Note that directories are not supported, and the payload requires
+/// a *filename*, not a *path*.
+#[cfg_attr(feature = "openapi", utoipa::path(
+    post,
+    path = "/asset/create",
+    request_body = CreateAssetBody,
+    responses(
+        (status = 200, description = "Asset was created."),
+        (status = 400, description = "The given filename was a path that did not actually have a filename."),
+        (status = 500, description = "An internal IO error occured.")
+    ),
+))]
 pub fn create() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path!("asset" / "create")
         .and(warp::post())
@@ -33,6 +53,24 @@ pub fn create() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reje
 }
 
 /// Delete a public asset
+///
+/// Given a path, deletes the *file* located there. Note that directories are
+/// not supported.
+#[cfg_attr(feature = "openapi", utoipa::path(
+    delete,
+    path = "/asset/{path}",
+    params((
+        "path" = String,
+        Path,
+        description = "Path of file to delete, relative to the public asset folder",
+        allow_reserved = true
+    )),
+    responses(
+        (status = 200, description = "Asset was deleted."),
+        (status = 404, description = "No file found to delete."),
+        (status = 500, description = "An internal IO error occured.")
+    ),
+))]
 pub fn delete() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path!("asset" / ..)
         .and(warp::delete())
@@ -62,6 +100,17 @@ pub fn delete() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reje
 }
 
 /// List private assets
+///
+/// Lists all files currently in the `/assets` folder.
+#[cfg_attr(feature = "openapi", utoipa::path(
+    get,
+    path = "/asset/list",
+    responses(
+        (status = 200, body = Vec<String>, description = "Files were listed."),
+        (status = 404, description = "The `/assets` folder could not be found on the server."),
+        (status = 500, description = "An internal IO error occured.")
+    ),
+))]
 pub fn list() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path!("asset" / "list")
         .and(warp::get())
@@ -77,6 +126,29 @@ pub fn list() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reject
 }
 
 /// Get a private asset
+///
+/// Given a path, get the *file* located there. Note that directories are
+/// not supported.
+#[cfg_attr(feature = "openapi", utoipa::path(
+    get,
+    path = "/asset/{path}",
+    params((
+        "path" = String,
+        Path,
+        description = "Path of file, relative to the public asset folder",
+        allow_reserved = true
+    )),
+    responses(
+        (
+            status = 200,
+            body = Vec<u8>,
+            content_type = "*/*",
+            description = "File contents. Note that content type is estimated for each file."
+        ),
+        (status = 404, description = "No file found to delete."),
+        (status = 500, description = "An internal IO error occured.")
+    ),
+))]
 pub fn get() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path!("asset" / ..)
         .and(warp::get())

@@ -13,10 +13,14 @@ pub mod error;
 pub use config::Config;
 pub use error::Error;
 
+#[cfg(feature = "openapi")]
 #[derive(utoipa::OpenApi)]
 #[openapi(
     nest(
-        (path = "/api/admin", api = routes::admin::AdminApiDoc)
+        (path = "/api/admin", api = routes::admin::AdminApiDoc),
+    ),
+    tags(
+        (name = "admin", description = "System management api")
     )
 )]
 pub struct OpenApiDoc;
