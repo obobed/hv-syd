@@ -13,15 +13,6 @@ pub mod error;
 pub use config::Config;
 pub use error::Error;
 
-#[cfg(feature = "openapi")]
-#[derive(utoipa::OpenApi)]
-#[openapi(
-    nest(
-        (path = "/api/admin", api = routes::admin::AdminApiDoc),
-    ),
-)]
-pub struct OpenApiDoc;
-
 pub const PUBLIC_ASSET_FOLDER: &str = "assets";
 pub const PRIVATE_ASSET_FOLDER: &str = "private";
 pub const GUIDES_FOLDER: &str = "guides";
@@ -88,3 +79,12 @@ fn initialise_db(state: &State) -> Result<(), Error> {
         Ok(())
     })
 }
+
+#[cfg(feature = "openapi")]
+#[derive(utoipa::OpenApi)]
+#[openapi(
+    nest(
+        (path = "/api/admin", api = routes::admin::AdminApiDoc),
+    ),
+)]
+pub struct OpenApiDoc;

@@ -18,18 +18,6 @@ mod submission;
 mod team;
 mod token;
 
-#[cfg(feature = "openapi")]
-#[derive(utoipa::OpenApi)]
-#[openapi(paths(
-    asset::create,
-    asset::delete,
-    asset::get,
-    asset::list,
-    attendee::list,
-    attendee::update,
-))]
-pub struct AdminApiDoc;
-
 /// Authentication filter
 fn with_admin_auth(
     token_env: &heed::Env,
@@ -99,4 +87,39 @@ pub fn all(
                 .or(token::get(token_env, tokens)),
         )),
     )
+}
+
+#[cfg(feature = "openapi")]
+#[derive(utoipa::OpenApi)]
+#[openapi(
+    paths(
+        asset::create,
+        asset::delete,
+        asset::get,
+        asset::list,
+        attendee::list,
+        attendee::update,
+    ),
+    security(("admin-api-key" = ["read:admin", "write:admin"])),
+    modifiers(&SecurityDetails)
+)]
+pub struct AdminApiDoc;
+
+#[cfg(feature = "openapi")]
+struct SecurityDetails;
+
+#[cfg(feature = "openapi")]
+impl utoipa::Modify for SecurityDetails {
+    fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+        if let Some(components) = openapi.components.as_mut() {
+            use utoipa::openapi::security::{ApiKey, ApiKeyValue, SecurityScheme};
+
+            components.add_security_scheme(
+                "admin-api-key",
+                SecurityScheme::ApiKey(ApiKey::Cookie(ApiKeyValue::new("api-key"))),
+            );
+        } else {
+            panic!("Failed to add api-key details: unable to get openapi components");
+        }
+    }
 }
