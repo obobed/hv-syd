@@ -2,7 +2,9 @@ use chrono::{DateTime, TimeDelta, Utc};
 use serde::{Deserialize, Deserializer, Serialize};
 
 #[derive(Serialize, Deserialize)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 pub struct Attendee {
+    #[cfg_attr(feature = "openapi", schema(value_type = Uuid))]
     pub id: String,
     pub team_name: Option<String>,
     pub first_name: String,

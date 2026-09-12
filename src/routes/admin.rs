@@ -20,7 +20,14 @@ mod token;
 
 #[cfg(feature = "openapi")]
 #[derive(utoipa::OpenApi)]
-#[openapi(paths(asset::create, asset::delete, asset::get, asset::list,))]
+#[openapi(paths(
+    asset::create,
+    asset::delete,
+    asset::get,
+    asset::list,
+    attendee::list,
+    attendee::update,
+))]
 pub struct AdminApiDoc;
 
 /// Authentication filter
