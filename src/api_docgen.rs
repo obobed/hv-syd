@@ -1,12 +1,12 @@
-use satellite::OpenApiDoc;
+use satellite::AdminApiDoc;
 use utoipa::OpenApi;
 
-const OUTPUT_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/openapi.json");
+const ADMIN_DOC_OUTPUT_PATH: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/admin-openapi.json");
 
 fn main() -> Result<(), Box<dyn core::error::Error>> {
-    let doc = OpenApiDoc::openapi().to_pretty_json()?;
+    let doc = AdminApiDoc::openapi().to_pretty_json()?;
 
-    std::fs::write(OUTPUT_PATH, &doc)?;
+    std::fs::write(ADMIN_DOC_OUTPUT_PATH, &doc)?;
 
     Ok(())
 }

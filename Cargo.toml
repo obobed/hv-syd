@@ -13,10 +13,12 @@ required-features = ["openapi"]
 name = "satellite"
 
 [features]
-openapi = ["dep:utoipa"]
+default = ["openapi"]
+openapi = ["dep:utoipa", "dep:dedent"]
 
 [dependencies]
 chrono = { version = "0.4.45", default-features = false, features = ["core-error", "now", "serde"] }
+dedent = { version = "0.1.1", optional = true }
 heed = {
     version = "=0.22.1", # >0.22.1 Will include LLM authored commit `275b9ea`.
     default-features = false,

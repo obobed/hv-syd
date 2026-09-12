@@ -92,6 +92,26 @@ pub fn all(
 #[cfg(feature = "openapi")]
 #[derive(utoipa::OpenApi)]
 #[openapi(
+    info(
+        title = "Satellites' Platform Documentation",
+        description = dedent::dedent!("
+        Welcome to the platform documentation. These are the backend endpoints for
+        admin actions.
+
+        Every endpoint listed here requires authentication, except for `/login`.
+        Use the admin credentials or a token in `/login`, then you should be able
+        to use any of these endpoints with the cookie that is set."),
+        contact(name = "valerie"),
+        license(name = "AGPL-3.0-or-later", identifier = "AGPL-3.0-or-later")
+    ),
+    nest((path = "/api/admin", api = AdminApiDocInner))
+)]
+/// API Documentation for admin paths.
+pub struct AdminApiDoc;
+
+#[cfg(feature = "openapi")]
+#[derive(utoipa::OpenApi)]
+#[openapi(
     paths(
         asset::create,
         asset::delete,
@@ -104,7 +124,8 @@ pub fn all(
     security(("admin-token" = ["read:admin", "write:admin"])),
     modifiers(&SecurityDetails)
 )]
-pub struct AdminApiDoc;
+/// This just holds all the paths so I can easily prefix them using `nest(...)`
+struct AdminApiDocInner;
 
 #[cfg(feature = "openapi")]
 struct SecurityDetails;

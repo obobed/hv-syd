@@ -290,6 +290,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "dedent"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a8a3dee4e932355439992a45dc631b0979abf9c677958674bd94298bf9002870"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
+]
+
+[[package]]
 name = "digest"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1300,6 +1311,7 @@ name = "satellite-platform"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "dedent",
  "heed",
  "log",
  "percent-encoding",
