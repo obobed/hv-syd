@@ -9,7 +9,7 @@ use crate::{Error, PRIVATE_ASSET_FOLDER, PUBLIC_ASSET_FOLDER, routes::json_body}
 #[derive(Serialize, Deserialize)]
 #[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 struct CreateAssetBody {
-    #[cfg_attr(feature = "openapi", schema(examples(0)))]
+    #[cfg_attr(feature = "openapi", schema(example = json!([0, 1, 2, 3])))]
     content: Vec<u8>,
     #[cfg_attr(feature = "openapi", schema(
         value_type = String,
