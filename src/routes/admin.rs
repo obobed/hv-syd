@@ -124,7 +124,10 @@ pub struct AdminApiDoc;
         login::login,
         milestone::set,
         submission::list,
-        submission::update
+        submission::update,
+        team::list,
+        team::get,
+        team::update
     ),
     security(("admin-token" = ["read:admin", "write:admin"])),
     modifiers(&SecurityDetails)

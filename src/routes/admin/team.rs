@@ -6,7 +6,17 @@ use warp::Filter;
 
 use crate::{Error, models::Team, routes::json_body};
 
-/// Get a list of team names
+/// Get a list of team names.
+///
+/// List all team names. This does not return any other data about teams.
+#[cfg_attr(feature = "openapi", utoipa::path(
+    get,
+    path = "/team/list",
+    responses(
+        (status = 200, body = Vec<Team>, description = "List of team names."),
+        (status = 500, description = "An internal database error occured.")
+    ),
+))]
 pub fn list(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
@@ -25,12 +35,15 @@ pub fn list(
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 struct TeamDetails {
     team_name: String,
+    #[cfg_attr(feature = "openapi", schema(value_type = Option<Vec<Attendee>>))]
     attendees: Option<Json<Vec<Attendee>>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 struct Attendee {
     id: String,
     first_name: String,
@@ -38,6 +51,20 @@ struct Attendee {
 }
 
 /// Get team details
+///
+/// For each non-null field in the request body, update the corresponding
+/// field of the submission. This requires that at least one of the fields is
+/// non-null.
+#[cfg_attr(feature = "openapi", utoipa::path(
+    get,
+    path = "/team/{name}",
+    params(("name" = String, Path, description = "Name of the team to fetch details for")),
+    responses(
+        (status = 200, body = TeamDetails, description = "Team details."),
+        (status = 404, description = "A team with the given `name` was not found."),
+        (status = 500, description = "An internal database error occured.")
+    ),
+))]
 pub fn get(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
@@ -57,6 +84,19 @@ pub fn get(
 }
 
 /// Update team details
+///
+/// Note that you can only update team names using this endpoint.
+#[cfg_attr(feature = "openapi", utoipa::path(
+    post,
+    path = "/team/{name}",
+    params(("name" = String, Path, description = "Name of the team to update")),
+    request_body = Team,
+    responses(
+        (status = 200, description = "Team name updated successfully."),
+        (status = 404, description = "An team with the given `name` was not found."),
+        (status = 500, description = "An internal database error occured.")
+    ),
+))]
 pub fn update(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
