@@ -50,7 +50,7 @@ pub fn update(
     tokens: &TokenMap,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path!("token" / String)
-        .and(warp::put())
+        .and(warp::post())
         .and(json_body())
         .map(|token: String, body: UpdateBody| {
             trace!("update token {} (POST /api/admin/token/{})", token, token);
