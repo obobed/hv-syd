@@ -93,6 +93,8 @@ pub fn get() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejecti
 
 #[cfg(test)]
 mod test {
+    use crate::{GUIDES_FOLDER, TOKENS_STORE_FOLDER};
+
     use super::{PRIVATE_ASSET_FOLDER, PUBLIC_ASSET_FOLDER, create, delete, get, list};
     use rand::{
         distr::{Alphanumeric, SampleString as _},
@@ -103,13 +105,14 @@ mod test {
         collections::HashMap,
         fs,
         path::{Path, PathBuf},
-        sync::Mutex,
+        sync::{Mutex, Once},
     };
     use warp::{http, test::request};
 
     const TEST_FILE: (&[u8], &str) = (b"woof woof :3", "woof.txt");
 
     static PRIVATE_DIR_LOCK: Mutex<u8> = Mutex::new(0);
+    static CREATE_DIRS: Once = Once::new();
 
     /// Macro for simplifying setup operations that could fail
     macro_rules! setup_assert {
@@ -125,8 +128,17 @@ mod test {
         PathBuf::from(&base).join(Alphanumeric.sample_string(&mut rng(), 6))
     }
 
+    fn initialise_folders() {
+        setup_assert!(fs::create_dir_all(PUBLIC_ASSET_FOLDER).is_ok());
+        setup_assert!(fs::create_dir_all(PRIVATE_ASSET_FOLDER).is_ok());
+        setup_assert!(fs::create_dir_all(GUIDES_FOLDER).is_ok());
+        setup_assert!(fs::create_dir_all(TOKENS_STORE_FOLDER).is_ok());
+    }
+
     #[tokio::test]
     async fn test_create() {
+        CREATE_DIRS.call_once(initialise_folders);
+
         let test_file_path = make_test_path(PUBLIC_ASSET_FOLDER);
         let payload = HashMap::from([
             ("content", json!(TEST_FILE.0)),
@@ -159,6 +171,8 @@ mod test {
 
     #[tokio::test]
     async fn test_delete() {
+        CREATE_DIRS.call_once(initialise_folders);
+
         let test_file_path = make_test_path(PUBLIC_ASSET_FOLDER);
 
         setup_assert!(fs::write(&test_file_path, TEST_FILE.0).is_ok());
@@ -182,6 +196,8 @@ mod test {
 
     #[tokio::test]
     async fn test_get() {
+        CREATE_DIRS.call_once(initialise_folders);
+
         let test_file_path = make_test_path(PRIVATE_ASSET_FOLDER);
 
         let guard = PRIVATE_DIR_LOCK.lock().unwrap();
@@ -208,6 +224,8 @@ mod test {
 
     #[tokio::test]
     async fn test_list() {
+        CREATE_DIRS.call_once(initialise_folders);
+
         let test_file_paths = (0..5)
             .map(|_| make_test_path(PRIVATE_ASSET_FOLDER))
             .collect::<Vec<_>>();
