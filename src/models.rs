@@ -51,6 +51,7 @@ pub struct Team {
 }
 
 #[derive(Serialize, Deserialize)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 pub struct TokenMetadata {
     pub level: Level,
     /// This is a timestamp
@@ -59,6 +60,7 @@ pub struct TokenMetadata {
 
 #[derive(Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 pub enum Level {
     Admin = 0,
     Attendee = 1,
