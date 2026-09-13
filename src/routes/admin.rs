@@ -100,7 +100,9 @@ pub fn all(
 
         Every endpoint listed here requires authentication, except for `/login`.
         Use the admin credentials or a token in `/login`, then you should be able
-        to use any of these endpoints with the cookie that is set."),
+        to use any of these endpoints with the cookie that is set.
+
+        Note that error response variants documented are not exhaustive"),
         contact(name = "valerie"),
         license(name = "AGPL-3.0-or-later", identifier = "AGPL-3.0-or-later")
     ),
@@ -121,6 +123,8 @@ pub struct AdminApiDoc;
         attendee::update,
         login::login,
         milestone::set,
+        submission::list,
+        submission::update
     ),
     security(("admin-token" = ["read:admin", "write:admin"])),
     modifiers(&SecurityDetails)

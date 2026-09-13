@@ -32,6 +32,7 @@ pub struct Prize {
 }
 
 #[derive(Serialize, Deserialize)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 pub struct Submission {
     pub id: String,
     pub team_name: String,
