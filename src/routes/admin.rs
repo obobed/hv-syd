@@ -84,7 +84,9 @@ pub fn all(
                 .or(token::list(token_env, tokens))
                 .or(token::create(token_env, tokens))
                 .or(token::update(token_env, tokens))
-                .or(token::get(token_env, tokens)),
+                .or(token::get(token_env, tokens))
+                .or(prize::add(database_pool))
+                .or(prize::update(database_pool)),
         )),
     )
 }
@@ -123,6 +125,8 @@ pub struct AdminApiDoc;
         attendee::update,
         login::login,
         milestone::set,
+        prize::add,
+        prize::update,
         submission::list,
         submission::update,
         team::list,

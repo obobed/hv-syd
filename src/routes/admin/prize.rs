@@ -10,7 +10,16 @@ use crate::{Error, models::Prize, routes::json_body};
 /// allow the added prize to be associated with any milestone, and when
 /// milestones are set, prizes are reset. See `/api/admin/milestone/set`
 /// instead.
-fn add(
+#[cfg_attr(feature = "openapi", utoipa::path(
+    post,
+    path = "/prize/add",
+    request_body = Prize,
+    responses(
+        (status = 200, description = "Prize created"),
+        (status = 500, description = "An internal database or IO error occured.")
+    ),
+))]
+pub fn add(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path!("prize" / "add")
@@ -36,6 +45,7 @@ fn add(
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 struct IncrementPrizeBody {
     stock_change: i64,
 }
@@ -44,7 +54,17 @@ struct IncrementPrizeBody {
 ///
 /// This only allows you to increment / decrement the stock count, given a prize
 /// name.
-fn update(
+#[cfg_attr(feature = "openapi", utoipa::path(
+    post,
+    path = "/prize/{name}",
+    params(("name", Path, description = "The name of the prize to update")),
+    request_body = IncrementPrizeBody,
+    responses(
+        (status = 200, description = "Prize updated"),
+        (status = 500, description = "An internal database or IO error occured.")
+    ),
+))]
+pub fn update(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path!("prize" / String)
