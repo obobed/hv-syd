@@ -33,7 +33,7 @@ pub fn create(
             .execute(&db)
             .await?;
 
-            Ok(warp::reply::reply())
+            Ok(warp::reply())
         })
 }
 
@@ -123,6 +123,6 @@ pub fn update(
 
             builder.build().execute(&db).await?;
 
-            Ok(warp::reply::reply())
+            Ok(warp::reply())
         })
 }

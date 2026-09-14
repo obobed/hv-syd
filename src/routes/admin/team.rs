@@ -78,6 +78,6 @@ pub fn update(
                 .execute(&db)
                 .await?;
 
-            Ok(warp::reply::reply())
+            Ok(warp::reply())
         })
 }
