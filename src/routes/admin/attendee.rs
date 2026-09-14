@@ -4,7 +4,7 @@ use sqlx::{Pool, Sqlite};
 use uuid::Uuid;
 use warp::Filter;
 
-use crate::{Error, routes::json_body};
+use crate::{Error, models::Attendee, routes::json_body};
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -35,14 +35,6 @@ pub fn create(
 
             Ok(warp::reply::reply())
         })
-}
-
-#[derive(Serialize, Deserialize)]
-struct Attendee {
-    id: String,
-    team_name: Option<String>,
-    first_name: String,
-    last_name: String,
 }
 
 /// Get a list of users

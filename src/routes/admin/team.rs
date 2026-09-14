@@ -4,13 +4,7 @@ use sqlx::{Pool, Sqlite, types::Json};
 use uuid::Uuid;
 use warp::Filter;
 
-use crate::{Error, routes::json_body};
-
-#[derive(Serialize, Deserialize)]
-#[allow(non_snake_case)]
-struct Team {
-    team_name: String,
-}
+use crate::{Error, models::Team, routes::json_body};
 
 /// Get a list of team names
 pub fn list(
@@ -31,7 +25,6 @@ pub fn list(
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-#[allow(non_snake_case)]
 struct TeamDetails {
     team_name: String,
     attendees: Option<Json<Vec<Attendee>>>,
@@ -63,11 +56,6 @@ pub fn get(
         })
 }
 
-#[derive(Serialize, Deserialize)]
-struct UpdateTeamBody {
-    team_name: String,
-}
-
 /// Update team details
 pub fn update(
     db: &Pool<Sqlite>,
@@ -77,21 +65,19 @@ pub fn update(
         .map(|id| (id, db.clone()))
         .untuple_one()
         .and(json_body())
-        .then(
-            async |name: String, db, body: UpdateTeamBody| -> Result<_, Error> {
-                trace!("update team name (POST /api/admin/team/{})", name);
+        .then(async |name: String, db, body: Team| -> Result<_, Error> {
+            trace!("update team name (POST /api/admin/team/{})", name);
 
-                Uuid::try_parse(&name)?;
+            Uuid::try_parse(&name)?;
 
-                sqlx::query_scalar!("SELECT 1 FROM teams WHERE teamName = ?", &name)
-                    .fetch_one(&db)
-                    .await?;
+            sqlx::query_scalar!("SELECT 1 FROM teams WHERE teamName = ?", &name)
+                .fetch_one(&db)
+                .await?;
 
-                sqlx::query_file!("sql/update-team-name.sql", body.team_name, name)
-                    .execute(&db)
-                    .await?;
+            sqlx::query_file!("sql/update-team-name.sql", body.team_name, name)
+                .execute(&db)
+                .await?;
 
-                Ok(warp::reply::reply())
-            },
-        )
+            Ok(warp::reply::reply())
+        })
 }

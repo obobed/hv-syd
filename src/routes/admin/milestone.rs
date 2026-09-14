@@ -1,29 +1,10 @@
 use log::trace;
-use serde::{Deserialize, Serialize};
 use sqlx::{Pool, Sqlite};
 use warp::Filter;
 
-use crate::{Error, routes::json_body};
+use crate::{Error, models::Milestone, routes::json_body};
 
 type Milestones = Vec<Milestone>;
-
-#[derive(Serialize, Deserialize)]
-struct Milestone {
-    name: String,
-    description: String,
-    requirements: Vec<String>,
-    prizes: Vec<Prize>,
-    optional: bool,
-}
-
-#[derive(Serialize, Deserialize)]
-struct Prize {
-    name: String,
-    description: String,
-    image: Option<String>,
-    participant_notes: Option<Vec<String>>,
-    stock: i64,
-}
 
 /// Set milestones and prizes
 ///

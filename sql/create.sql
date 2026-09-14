@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS prizes (
     image             TEXT,
     participantNotes  TEXT, -- Option<Vec<String>>
     stock             INTEGER,
-    milestone         INTEGER NOT NULL,
+    milestone         INTEGER,
 
     FOREIGN KEY(milestone)
     REFERENCES milestones(id)

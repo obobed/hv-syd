@@ -2,6 +2,49 @@ use chrono::{DateTime, TimeDelta, Utc};
 use serde::{Deserialize, Deserializer, Serialize};
 
 #[derive(Serialize, Deserialize)]
+pub struct Attendee {
+    pub id: String,
+    pub team_name: Option<String>,
+    pub first_name: String,
+    pub last_name: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Milestone {
+    pub name: String,
+    pub description: String,
+    pub requirements: Vec<String>,
+    pub prizes: Vec<Prize>,
+    pub optional: bool,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Prize {
+    pub name: String,
+    pub description: String,
+    pub image: Option<String>,
+    pub participant_notes: Option<Vec<String>>,
+    pub stock: i64,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Submission {
+    pub id: String,
+    pub team_name: String,
+    pub milestone: i64,
+    pub description: Option<String>,
+    pub attachment: Option<String>,
+    pub approved: bool,
+    /// Creation time, as a UNIX timestamp.
+    pub creation_time: i64,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Team {
+    pub team_name: String,
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct TokenMetadata {
     pub level: Level,
     /// This is a timestamp

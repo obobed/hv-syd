@@ -4,19 +4,7 @@ use sqlx::{Pool, Sqlite};
 use uuid::Uuid;
 use warp::Filter;
 
-use crate::{Error, routes::json_body};
-
-#[derive(Serialize, Deserialize)]
-struct Submission {
-    id: String,
-    team_name: String,
-    milestone: i64,
-    description: Option<String>,
-    attachment: Option<String>,
-    approved: bool,
-    /// Creation time, as a UNIX timestamp.
-    creation_time: i64,
-}
+use crate::{Error, models::Submission, routes::json_body};
 
 /// Fetch an overview of all? submissions
 pub fn list(
