@@ -125,6 +125,12 @@ pub fn list() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reject
         })
 }
 
+#[cfg(feature = "openapi")]
+#[derive(utoipa::ToSchema)]
+#[schema(content_encoding = "binary")]
+#[expect(dead_code)]
+struct File(String);
+
 /// Get a private asset
 ///
 /// Given a path, get the *file* located there. Note that directories are
@@ -141,7 +147,7 @@ pub fn list() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reject
     responses(
         (
             status = 200,
-            body = Vec<u8>,
+            body = File,
             content_type = "*/*",
             description = "File contents. Note that content type is estimated for each file."
         ),
