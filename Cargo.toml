@@ -13,7 +13,7 @@ required-features = ["openapi"]
 name = "satellite"
 
 [features]
-default = ["openapi"]
+default = []
 openapi = ["dep:utoipa", "dep:dedent"]
 
 [dependencies]
