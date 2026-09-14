@@ -7,7 +7,37 @@ use warp::Filter;
 use crate::{Error, routes::json_body};
 
 #[derive(Serialize, Deserialize)]
-#[allow(non_snake_case)]
+#[serde(rename_all = "camelCase")]
+struct CreateAttendeeBody {
+    id: Uuid,
+    first_name: String,
+    last_name: String,
+}
+
+pub fn create(
+    db: &Pool<Sqlite>,
+) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+    warp::path!("attendee" / "create")
+        .and(warp::post())
+        .map(|| db.clone())
+        .and(json_body())
+        .then(async |db, body: CreateAttendeeBody| -> Result<_, Error> {
+            trace!("create attendee (POST /api/admin/attendee/create)");
+
+            sqlx::query_file!(
+                "sql/insert-attendee.sql",
+                body.id.to_string(),
+                body.first_name,
+                body.last_name
+            )
+            .execute(&db)
+            .await?;
+
+            Ok(warp::reply::reply())
+        })
+}
+
+#[derive(Serialize, Deserialize)]
 struct Attendee {
     id: String,
     team_name: Option<String>,
@@ -23,7 +53,7 @@ pub fn list(
         .and(warp::get())
         .map(|| db.clone())
         .then(async |db| -> Result<_, Error> {
-            trace!("get attendee list (GET /api/admin/attendees)");
+            trace!("get attendee list (GET /api/admin/attendee/list)");
 
             // Note: WILL NOT SCALE!! But considering the platform will probably
             // handle 200 attendees max, this shouldn't be an issue :3
@@ -40,7 +70,13 @@ pub fn list(
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct UpdateAttendeeBody {
-    team_name: Option<String>,
+    #[serde(deserialize_with = "crate::models::double_option")]
+    // Team name could be present but null:
+    //
+    // Some(Some(v)) => v,
+    // Some(None) => null,
+    // None => not present
+    team_name: Option<Option<String>>,
     first_name: Option<String>,
     last_name: Option<String>,
 }
@@ -68,9 +104,15 @@ pub fn update(
 
             let mut builder = sqlx::QueryBuilder::new("UPDATE attendees SET ");
 
-            if let Some(team_name) = body.team_name {
-                builder.push("teamName = ");
-                builder.push_bind(team_name);
+            match body.team_name {
+                Some(Some(team_name)) => {
+                    builder.push("teamName = ");
+                    builder.push_bind(team_name);
+                }
+                Some(None) => {
+                    builder.push("teamName = NULL");
+                }
+                None => (),
             }
             if let Some(first_name) = body.first_name {
                 builder.push("firstName = ");

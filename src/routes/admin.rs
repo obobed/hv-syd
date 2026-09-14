@@ -71,6 +71,7 @@ pub fn all(
                 .or(asset::get())
                 .or(submission::list(database_pool))
                 .or(submission::update(database_pool))
+                .or(attendee::create(database_pool))
                 .or(attendee::list(database_pool))
                 .or(attendee::update(database_pool))
                 .or(team::list(database_pool))

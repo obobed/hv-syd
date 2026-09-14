@@ -3,7 +3,6 @@ CREATE TABLE IF NOT EXISTS attendees (
     teamName    TEXT,
     firstName   TEXT  NOT NULL,
     lastName    TEXT  NOT NULL,
-    pwHash      TEXT  NOT NULL,
 
     FOREIGN KEY(teamName)
     REFERENCES teams(teamName)

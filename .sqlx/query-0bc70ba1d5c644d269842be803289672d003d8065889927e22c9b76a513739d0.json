@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO attendees (\n    id,\n    teamName,\n    firstName,\n    lastName\n) VALUES ( $1, NULL, $2, $3 );\n",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 3
+    },
+    "nullable": []
+  },
+  "hash": "0bc70ba1d5c644d269842be803289672d003d8065889927e22c9b76a513739d0"
+}
