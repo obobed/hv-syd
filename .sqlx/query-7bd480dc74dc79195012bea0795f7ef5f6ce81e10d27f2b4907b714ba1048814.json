@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "UPDATE prizes SET\n    stock = stock + $1\nWHERE prizeName = $2;\n",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "7bd480dc74dc79195012bea0795f7ef5f6ce81e10d27f2b4907b714ba1048814"
+}

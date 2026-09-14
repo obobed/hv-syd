@@ -13,6 +13,7 @@ mod asset;
 mod attendee;
 mod login;
 mod milestone;
+mod prize;
 mod submission;
 mod team;
 mod token;
