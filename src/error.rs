@@ -15,6 +15,7 @@ pub enum Error {
     Unauthorized,
     Forbidden,
     NotFound,
+    Conflict,
     MethodNotAllowed,
     LengthRequired,
     ContentTooLarge,
@@ -38,6 +39,7 @@ impl std::fmt::Display for Error {
             Error::Unauthorized => write!(f, "unauthorized"),
             Error::Forbidden => write!(f, "forbidden"),
             Error::NotFound => write!(f, "not found"),
+            Error::Conflict => write!(f, "resource conflict"),
             Error::MethodNotAllowed => write!(f, "method not allowed"),
             Error::LengthRequired => write!(f, "length required"),
             Error::ContentTooLarge => write!(f, "content too large"),
@@ -77,6 +79,7 @@ impl From<Error> for StatusCode {
             Error::Unauthorized => StatusCode::UNAUTHORIZED,
             Error::Forbidden => StatusCode::FORBIDDEN,
             Error::NotFound => StatusCode::NOT_FOUND,
+            Error::Conflict => StatusCode::CONFLICT,
             Error::MethodNotAllowed => StatusCode::METHOD_NOT_ALLOWED,
             Error::LengthRequired => StatusCode::LENGTH_REQUIRED,
             Error::ContentTooLarge => StatusCode::PAYLOAD_TOO_LARGE,
@@ -192,6 +195,10 @@ impl From<sqlx::Error> for Error {
             match value {
                 sqlx::Error::Io(e) => e.into(),
                 sqlx::Error::RowNotFound => Error::NotFound,
+                sqlx::Error::Database(e) => match e.kind() {
+                    sqlx::error::ErrorKind::ExclusionViolation => Error::Conflict,
+                    _ => Error::BadRequest,
+                },
                 _ => Error::InternalServerError,
             }
         }
