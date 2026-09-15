@@ -23,9 +23,9 @@ pub fn guides() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reje
     const MARKDOWN_OPTIONS: pulldown_cmark::Options = pulldown_cmark::Options::all();
     // <https://www.rfc-editor.org/info/rfc7763/>, <https://daringfireball.net/linked/2014/01/08/markdown-extension>
     const MARKDOWN_EXTENSIONS: &[&str] = &["md", "markdown", "text"];
-
-    // TODO: Possibly wrap the output of `html::push_html` with proper `<body>` tags,
-    // add the `<!doctype html>`, possibly custom `<head>`, etc.
+    const MARKDOWN_START: &str =
+        include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/guide-start.html"));
+    const MARKDOWN_END: &str = "</body>";
 
     warp::path(crate::GUIDES_FOLDER)
         .and(warp::fs::dir(crate::GUIDES_FOLDER))
@@ -43,10 +43,14 @@ pub fn guides() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reje
             let parser = pulldown_cmark::Parser::new_ext(&markdown, MARKDOWN_OPTIONS);
 
             let estimated_html_length = markdown.len() * 3 / 2;
-            let mut buf = String::with_capacity(estimated_html_length);
 
-            pulldown_cmark::html::push_html(&mut buf, parser);
+            let mut html = MARKDOWN_START.to_owned();
+            html.reserve(estimated_html_length);
 
-            Ok(warp::reply::html(buf).into_response())
+            pulldown_cmark::html::push_html(&mut html, parser);
+
+            html.push_str(MARKDOWN_END);
+
+            Ok(warp::reply::html(html).into_response())
         })
 }
