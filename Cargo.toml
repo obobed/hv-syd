@@ -25,10 +25,14 @@ heed = {
     features = ["serde", "serde-rmp"]
 }
 log = "0.4.34"
-markdown = { version = "1.0.0", features = ["log"] }
 percent-encoding = "2.3.2"
 pollster = "1.0.1"
 pretty_env_logger = "0.5.0"
+
+# test test::cmark       ... bench:      27,769.90 ns/iter (+/- 263.10)
+# test test::markdown_rs ... bench:   1,440,134.05 ns/iter (+/- 47,630.34)
+pulldown-cmark = { version = "0.13.4", default-features = false, features = ["html"] }
+
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 sqlx = { version = "0.9.0", features = ["json", "runtime-tokio", "sqlite"] }
