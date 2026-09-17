@@ -6,7 +6,6 @@ default-run = "satellite-platform"
 
 [[bin]]
 name = "gen-openapi"
-path = "./src/api_docgen.rs"
 required-features = ["openapi"]
 
 [lib]
