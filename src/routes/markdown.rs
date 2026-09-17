@@ -4,7 +4,7 @@ use warp::reply::Reply as _;
 
 use crate::Error;
 
-const MARKDOWN_OPTIONS: LazyLock<pulldown_cmark::Options> = LazyLock::new(|| {
+static MARKDOWN_OPTIONS: LazyLock<pulldown_cmark::Options> = LazyLock::new(|| {
     use pulldown_cmark::Options;
     Options::all()
         & !Options::ENABLE_SMART_PUNCTUATION
@@ -100,10 +100,9 @@ mod ext {
                 class_str, icon, title
             );
 
-            let quoted_iter = self.inner.by_ref().take_while(|inner| match inner {
-                Event::End(TagEnd::BlockQuote(Some(end))) if end == &kind => return false,
-                _ => return true,
-            });
+            let quoted_iter = self.inner.by_ref().take_while(
+                |event| !matches!(event, Event::End(TagEnd::BlockQuote(Some(end_kind))) if end_kind == &kind),
+            );
 
             pulldown_cmark::html::push_html(&mut quoted_content, quoted_iter);
 
