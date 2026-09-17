@@ -74,7 +74,7 @@ mod ext {
                     include_str!("../../assets/note.svg"),
                 ),
                 BlockQuoteKind::Tip => (
-                    " class=\"markdown-alert-tip\"",
+                    " class=\"markdown-alert markdown-alert-tip\"",
                     "Tip",
                     include_str!("../../assets/tip.svg"),
                 ),
