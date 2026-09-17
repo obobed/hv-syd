@@ -1,6 +1,0 @@
-These are themes for Syntect, taken from <https://github.com/rainglow/sublime/>.
-
-
-To generate `/assets/themes.themedump`, run:
-
-    cargo run --bin gen-syntect-assets
