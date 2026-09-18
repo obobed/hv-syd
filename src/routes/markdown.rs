@@ -1,16 +1,18 @@
-use std::sync::LazyLock;
-
 use warp::reply::Reply as _;
 
 use crate::Error;
 
-static MARKDOWN_OPTIONS: LazyLock<pulldown_cmark::Options> = LazyLock::new(|| {
-    use pulldown_cmark::Options;
-    Options::all()
-        & !Options::ENABLE_SMART_PUNCTUATION
-        & !Options::ENABLE_OLD_FOOTNOTES
-        & !Options::ENABLE_MATH
-});
+/// Equivalent to
+/// ```
+/// Options::all()
+///     & !Options::ENABLE_SMART_PUNCTUATION
+///     & !Options::ENABLE_OLD_FOOTNOTES
+///     & !Options::ENABLE_MATH
+///     | Options::ENABLE_FOOTNOTES
+/// ```
+static MARKDOWN_OPTIONS: pulldown_cmark::Options =
+    pulldown_cmark::Options::from_bits_truncate(0b01111100111011110);
+
 // <https://www.rfc-editor.org/info/rfc7763/>, <https://daringfireball.net/linked/2014/01/08/markdown-extension>
 const MARKDOWN_EXTENSIONS: &[&str] = &["md", "markdown", "text"];
 const MARKDOWN_START: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/guide-start.html"));
@@ -27,10 +29,7 @@ pub async fn handler(f: warp::filters::fs::File) -> Result<impl warp::Reply, Err
 
     let markdown = tokio::fs::read_to_string(f.path()).await?;
 
-    let iter = ext::with_alerts(pulldown_cmark::Parser::new_ext(
-        &markdown,
-        *MARKDOWN_OPTIONS,
-    ));
+    let iter = ext::with_alerts(pulldown_cmark::Parser::new_ext(&markdown, MARKDOWN_OPTIONS));
 
     let estimated_html_length = markdown.len() * 3 / 2;
 
