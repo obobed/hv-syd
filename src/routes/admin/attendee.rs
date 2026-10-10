@@ -70,7 +70,7 @@ pub fn list(
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct UpdateAttendeeBody {
-    #[serde(deserialize_with = "crate::models::double_option")]
+    #[serde(default, deserialize_with = "crate::models::double_option")]
     // Team name could be present but null:
     //
     // Some(Some(v)) => v,
