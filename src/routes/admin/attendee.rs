@@ -104,26 +104,28 @@ pub fn update(
 
             let mut builder = sqlx::QueryBuilder::new("UPDATE attendees SET ");
 
+            let mut separated = builder.separated(",");
+
             match body.team_name {
                 Some(Some(team_name)) => {
-                    builder.push("teamName = ");
-                    builder.push_bind(team_name);
+                    separated.push("teamName=");
+                    separated.push_bind_unseparated(team_name);
                 }
                 Some(None) => {
-                    builder.push("teamName = NULL");
+                    separated.push("teamName=NULL");
                 }
                 None => (),
             }
             if let Some(first_name) = body.first_name {
-                builder.push("firstName = ");
-                builder.push_bind(first_name);
+                separated.push("firstName=");
+                separated.push_bind_unseparated(first_name);
             }
             if let Some(last_name) = body.last_name {
-                builder.push("lastName = ");
-                builder.push_bind(last_name);
+                separated.push("lastName=");
+                separated.push_bind_unseparated(last_name);
             }
 
-            builder.push(" WHERE id = ");
+            builder.push(" WHERE id=");
             builder.push_bind(id);
             builder.push(";");
 
