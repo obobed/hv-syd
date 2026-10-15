@@ -196,7 +196,7 @@ impl From<sqlx::Error> for Error {
                 sqlx::Error::Io(e) => e.into(),
                 sqlx::Error::RowNotFound => Error::NotFound,
                 sqlx::Error::Database(e) => match e.kind() {
-                    sqlx::error::ErrorKind::ExclusionViolation => Error::Conflict,
+                    sqlx::error::ErrorKind::UniqueViolation => Error::Conflict,
                     _ => Error::BadRequest,
                 },
                 _ => Error::InternalServerError,
