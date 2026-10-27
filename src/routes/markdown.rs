@@ -4,11 +4,12 @@ use crate::Error;
 
 /// Equivalent to
 /// ```
+/// use pulldown_cmark::Options;
 /// Options::all()
 ///     & !Options::ENABLE_SMART_PUNCTUATION
 ///     & !Options::ENABLE_OLD_FOOTNOTES
 ///     & !Options::ENABLE_MATH
-///     | Options::ENABLE_FOOTNOTES
+///     | Options::ENABLE_FOOTNOTES;
 /// ```
 static MARKDOWN_OPTIONS: pulldown_cmark::Options =
     pulldown_cmark::Options::from_bits_truncate(0b01111100111011110);
