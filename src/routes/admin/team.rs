@@ -52,9 +52,7 @@ struct Attendee {
 
 /// Get team details
 ///
-/// For each non-null field in the request body, update the corresponding
-/// field of the submission. This requires that at least one of the fields is
-/// non-null.
+/// Get the details of one team.
 #[cfg_attr(feature = "openapi", utoipa::path(
     get,
     path = "/team/{name}",
