@@ -4,18 +4,13 @@ use log::trace;
 use serde::{Deserialize, Serialize};
 use warp::Filter;
 
-use crate::{Error, PRIVATE_ASSET_FOLDER, PUBLIC_ASSET_FOLDER, routes::json_body};
+use crate::{Error, PRIVATE_ASSET_FOLDER, PUBLIC_ASSET_FOLDER};
 
 #[derive(Serialize, Deserialize)]
 #[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 struct CreateAssetBody {
     #[cfg_attr(feature = "openapi", schema(example = json!([0, 1, 2, 3])))]
     content: Vec<u8>,
-    #[cfg_attr(feature = "openapi", schema(
-        value_type = String,
-        examples("icon.svg")
-    ))]
-    filename: PathBuf,
 }
 
 /// Create a public asset
@@ -24,32 +19,59 @@ struct CreateAssetBody {
 /// folder. Note that directories are not supported, and the payload requires
 /// a *filename*, not a *path*.
 #[cfg_attr(feature = "openapi", utoipa::path(
-    post,
-    path = "/asset/create",
+    put,
+    path = "/asset/{path}",
+    params((
+        "path" = String,
+        Path,
+        description = "Path of file to create, relative to the public asset folder",
+        allow_reserved = true
+    )),
     request_body = CreateAssetBody,
     responses(
         (status = 200, description = "Asset was created."),
-        (status = 400, description = "The given filename was a path that did not actually have a filename."),
+        (status = 404, description = "URL decoding failed, probably because the path was not valid UTF-8."),
+        (status = 400, description = "The given path was a directory (ends in `/`)."),
         (status = 500, description = "An internal IO error occured.")
     ),
 ))]
 pub fn create() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("asset" / "create")
-        .and(warp::post())
-        .and(json_body())
-        .then(async |body: CreateAssetBody| -> Result<_, Error> {
-            let filename = PathBuf::from(PUBLIC_ASSET_FOLDER)
-                .join(body.filename.file_name().ok_or(Error::BadRequest)?);
+    warp::path!("asset" / ..)
+        .and(warp::put())
+        .and(warp::body::json()) // <- `crate::routes::json_body` has a 64KiB limit
+        .and(warp::path::tail())
+        .then(
+            async |body: CreateAssetBody, tail: warp::path::Tail| -> Result<_, Error> {
+                let Ok(tail) = percent_encoding::percent_decode_str(tail.as_str()).decode_utf8()
+                else {
+                    return Err(Error::NotFound);
+                };
 
-            trace!(
-                "create public asset (POST /api/admin/asset/{})",
-                filename.file_name().unwrap().to_string_lossy()
-            );
+                let path = sanitise_path(PathBuf::from(PUBLIC_ASSET_FOLDER), &tail)?;
 
-            tokio::fs::write(filename, body.content).await?;
+                // `Path::has_trailing_sep` is still unstable so,,,
+                if path
+                    .as_os_str()
+                    .as_encoded_bytes()
+                    .last()
+                    .is_some_and(|&b| std::path::is_separator(b as char))
+                {
+                    return Err(Error::BadRequest);
+                }
 
-            Ok(warp::reply())
-        })
+                trace!(
+                    "create public asset (POST /api/admin/asset/{})",
+                    path.to_string_lossy()
+                );
+
+                // NOTE: Keep this sync! This makes sure the file can actually be created ;-;
+                fs::create_dir_all(path.parent().ok_or(Error::NotFound)?)?;
+
+                tokio::fs::write(path, body.content).await?;
+
+                Ok(warp::reply())
+            },
+        )
 }
 
 /// Delete a public asset
@@ -81,15 +103,7 @@ pub fn delete() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reje
             };
             trace!("delete public asset (DELETE /api/admin/asset/{})", tail);
 
-            let mut path = PathBuf::from(PUBLIC_ASSET_FOLDER);
-
-            for seg in tail.split('/') {
-                if seg.starts_with("..") || seg.contains('\\') {
-                    return Err(Error::NotFound);
-                }
-                path.push(seg);
-            }
-
+            let path = sanitise_path(PathBuf::from(PUBLIC_ASSET_FOLDER), &tail)?;
             if !path.exists() {
                 return Err(Error::NotFound);
             }
@@ -169,6 +183,17 @@ pub fn get() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejecti
         })
 }
 
+fn sanitise_path(mut head: PathBuf, tail: &str) -> Result<PathBuf, Error> {
+    for seg in tail.split('/') {
+        if seg.starts_with("..") || seg.contains('\\') {
+            return Err(Error::NotFound);
+        }
+        head.push(seg);
+    }
+
+    Ok(head)
+}
+
 #[cfg(test)]
 mod test {
     use crate::{GUIDES_FOLDER, TOKENS_STORE_FOLDER};
@@ -218,25 +243,17 @@ mod test {
         CREATE_DIRS.call_once(initialise_folders);
 
         let test_file_path = make_test_path(PUBLIC_ASSET_FOLDER);
-        let payload = HashMap::from([
-            ("content", json!(TEST_FILE.0)),
-            (
-                "filename",
-                json!(
-                    test_file_path
-                        .file_name()
-                        .map(|p| p.to_string_lossy().into_owned())
-                        .unwrap()
-                ),
-            ),
-        ]);
+        let payload = HashMap::from([("content", json!(TEST_FILE.0))]);
 
         _ = fs::remove_file(&test_file_path);
         setup_assert!(!test_file_path.exists());
 
         let res = request()
-            .path("/asset/create")
-            .method("POST")
+            .path(&format!(
+                "/asset/{}",
+                test_file_path.file_name().unwrap().to_string_lossy()
+            ))
+            .method("PUT")
             .json(&payload)
             .reply(&create())
             .await;
