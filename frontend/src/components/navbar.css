@@ -1,0 +1,8 @@
+.navbg {
+    display :flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+}
