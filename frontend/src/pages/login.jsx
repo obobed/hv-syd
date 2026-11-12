@@ -24,7 +24,6 @@ export default function Login() {
     }, [isLoggedIn, navigate])
 
     const handleScan = (detectedCodes) => {
-      console.log('Detected codes:', detectedCodes);
       detectedCodes.forEach(code => {
         const QRID = String(code.rawValue).slice(17)
         setAttendID(QRID)
@@ -34,11 +33,32 @@ export default function Login() {
     });
     };
 
-    async function adminLogin() {
+    async function adminLogin(url = '', payload = {}) {
       console.log({username, password, adminToken})
 
-      // Send either username+password to api, or just adminToken. Based on result set isLoggedIn to true.
-      // Make sure to implement error to provide proper error messages.
+      try {
+        const response = await fetch(url, {
+          method: "POST", 
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: 'include',
+          body: JSON.stringify(payload)
+        })
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        console.log("Login successful! The admin-token cookie is now set.");
+        setIsAdmin(true)
+        setIsLoggedIn(true)
+      } catch (error) {
+          console.error('Fetch failed:', error.message);
+          setIsAdmin(false)
+          setIsLoggedIn(false)
+      }
     }
 
     return(
@@ -119,7 +139,12 @@ export default function Login() {
 
         <button
           type='button'
-          onClick={adminLogin}
+          onClick={() =>
+            adminLogin("/api/admin/login", {
+              username: username,
+              password: password
+            })
+          }
         >
           Confirm
         </button>
