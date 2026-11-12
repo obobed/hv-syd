@@ -8,7 +8,11 @@ export default function Navbar() {
     return (
         <nav className='navbg'>
             <img src= {logo} alt='hvsyd' className='logo' /> 
-            <p1 className='navlink'>hello!</p1>
+            <div className='navLink'>
+                <Link to="/Login"  className='navLink'>
+                    Login
+                </Link>
+            </div>
         </nav>
     )
 }

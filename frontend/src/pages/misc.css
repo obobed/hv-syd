@@ -1,0 +1,12 @@
+.qrScanner {
+    width: 300px;
+    height: 300px;
+    margin: 0 auto;
+}
+
+.qrButtons {
+    display :flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
