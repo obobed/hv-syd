@@ -93,7 +93,11 @@ fn with_creds(
     Ok(warp::reply::with_header(
         warp::reply(),
         "Set-Cookie",
-        format!("admin-token={token}"),
+        format!(
+            "admin-token={}; Expires={}",
+            token,
+            metadata.exp.to_rfc2822()
+        ),
     ))
 }
 
@@ -117,7 +121,11 @@ fn with_token(
         Ok(warp::reply::with_header(
             warp::reply(),
             "Set-Cookie",
-            format!("admin-token={token}"),
+            format!(
+                "admin-token={}; Expires={}",
+                token,
+                metadata.exp.to_rfc2822()
+            ),
         ))
     }
 }
