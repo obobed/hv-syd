@@ -19,7 +19,7 @@ export default function Login() {
     useEffect(() => {
       // Check if user is already logged in
       if (isLoggedIn) {
-        navigate('/dashboard', {replace: true})
+        // navigate('/dashboard', {replace: true})
       } 
     }, [isLoggedIn, navigate])
 

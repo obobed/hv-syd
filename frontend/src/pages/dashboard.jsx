@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router'
+import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'
 
 export default function Dashboard() {
@@ -7,7 +8,10 @@ export default function Dashboard() {
     const [submissions, setSubmissions] = useState([])
 
     useEffect(() => {
-        // check if user is admin or no
+        const token = Cookies.get('admin-token');
+        if (token) {
+            setIsAdmin(true)
+        }
     })
 
     useEffect(() => {
@@ -29,10 +33,6 @@ export default function Dashboard() {
         }
     }
 
-    async function help() {
-        //send help! (request)
-    }
-
     return(
         <>
         <button onClick={() => setIsAdmin(!isAdmin)}>
@@ -43,9 +43,6 @@ export default function Dashboard() {
             <>
                 <div>
                     <p>unreviewed submissions</p>
-                </div>
-                <div>
-                    <p>cries for help</p>
                 </div>
                 <div>
                     <p>tokens</p>
@@ -60,9 +57,6 @@ export default function Dashboard() {
                 </div>
                 <div>
                     <p>team name + member names</p>
-                </div>
-                <div>
-                    <p>help button</p>
                 </div>
             </>
         )}
