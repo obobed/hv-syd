@@ -11,6 +11,7 @@ export default function Login() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [adminToken, setAdminToken] = useState('')
+    const [isAdmin, setIsAdmin] = useState(false)
 
 
     const handleScan = (detectedCodes) => {
@@ -28,43 +29,53 @@ export default function Login() {
 
     return(
     <div>
-      <div className='qrScanner'>
-        <Scanner
-          onScan={handleScan}
-          paused={isPaused}
-        />
-      </div>
 
-      <div className='qrButtons'>
-        <select onChange={(e) => setSelectedDevice(e.target.value)}>
-          <option value="">Select a camera</option>
-          {devices.map((device) => (
-            <option key={device.deviceId} value={device.deviceId}>
-              {device.label || `Camera ${device.deviceId}`}
-            </option>
-          ))}
-        </select>
+      <button onClick={() => setIsAdmin(!isAdmin)}>
+        {isAdmin ? 'Switch to Attendee' : 'Switch to Admin'}
+      </button>
 
-        <button onClick={() => setIsPaused(!isPaused)}>
-          {isPaused ? 'Resume' : 'Pause'} Scanning
-        </button>
-      </div>
+      {!isAdmin && (
+        <>
+        <div className='qrScanner'>
+          <Scanner
+            onScan={handleScan}
+            paused={isPaused}
+          />
+        </div>
 
-      <div className='qrButtons'>
-        <input
-          type='text'
-          placeholder='Enter Attend-ID'
-          value={attendID}
-          onChange={(e) => setAttendID(e.target.value)}
-          size="34"
-        />
+        <div className='qrButtons'>
+          <select onChange={(e) => setSelectedDevice(e.target.value)}>
+            <option value="">Select a camera</option>
+            {devices.map((device) => (
+              <option key={device.deviceId} value={device.deviceId}>
+                {device.label || `Camera ${device.deviceId}`}
+              </option>
+            ))}
+          </select>
 
-        <button onClick={() => setAttendID(attendID)}>
-          Log In
-        </button>
-      </div>
+          <button onClick={() => setIsPaused(!isPaused)}>
+            {isPaused ? 'Resume' : 'Pause'} Scanning
+          </button>
+        </div>
 
-      <div>
+        <div className='qrButtons'>
+          <input
+            type='text'
+            placeholder='Enter Attend-ID'
+            value={attendID}
+            onChange={(e) => setAttendID(e.target.value)}
+            size="34"
+          />
+
+          <button onClick={() => handleScan}>
+            Log In
+          </button>
+        </div>
+      </>
+      )}
+
+      {isAdmin && (
+        <>
         <div>
           <input
             type='text'
@@ -98,8 +109,8 @@ export default function Login() {
         >
           Confirm
         </button>
-
-      </div>
+        </>
+      )}
     </div>
     )
 }
