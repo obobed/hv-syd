@@ -1,9 +1,10 @@
-import { Link, useNavigate } from 'react-router'
+import { useNavigate } from 'react-router'
 import { useEffect, useState } from 'react'
 import { Scanner, useDevices } from '@yudiel/react-qr-scanner';
 import './misc.css'
 
 export default function Login() {
+    const navigate = useNavigate()
     const [attendID, setAttendID] = useState('')
     const devices = useDevices();
     const [selectedDevice, setSelectedDevice] = useState(null);
@@ -12,7 +13,15 @@ export default function Login() {
     const [password, setPassword] = useState('')
     const [adminToken, setAdminToken] = useState('')
     const [isAdmin, setIsAdmin] = useState(false)
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [error, setError] = useState('')
 
+    useEffect(() => {
+      // Check if user is already logged in
+      if (isLoggedIn) {
+        navigate('/dashboard', {replace: true})
+      } 
+    }, [isLoggedIn, navigate])
 
     const handleScan = (detectedCodes) => {
       console.log('Detected codes:', detectedCodes);
@@ -20,11 +29,16 @@ export default function Login() {
         const QRID = String(code.rawValue).slice(17)
         setAttendID(QRID)
         console.log({attendID});
+
+        // Send ID to API and return login result. Set isLoggedIn to true if successful
     });
     };
 
     async function adminLogin() {
       console.log({username, password, adminToken})
+
+      // Send either username+password to api, or just adminToken. Based on result set isLoggedIn to true.
+      // Make sure to implement error to provide proper error messages.
     }
 
     return(

@@ -9,8 +9,8 @@ export default function Navbar() {
         <nav className='navbg'>
             <img src= {logo} alt='hvsyd' className='logo' /> 
             <div className='navLink'>
-                <Link to="/Login"  className='navLink'>
-                    Login
+                <Link to="/dashboard"  className='navLink'>
+                    Dashboard
                 </Link>
             </div>
         </nav>

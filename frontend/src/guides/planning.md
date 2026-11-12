@@ -4,7 +4,7 @@ Scan QR code or manually enter attend ID. There will be a super secret admin but
 
 Attendee:
 - Dashboard: notify post, submission get, team post
-Show submitted milestones + status, team + members, help button
+Show milestones being reviewed + status, team + members, help button
 - Milestones: get milestone, post submission, upload post
 Show all milestones, prizes + stock, 
 
