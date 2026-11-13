@@ -1,12 +1,33 @@
-import { Link, NavLink, useNavigate } from 'react-router'
+import { useEffect, useState } from 'react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router'
 import logo from '../assets/hvsydLogoTrans.svg'
 import avatar from '../assets/haven/hedgehog.webp'
-import { clearSession, readDisplaySession } from '../lib/session'
+import { clearSession, readSession } from '../lib/session'
 import './navbar.css'
 
 export default function Navbar() {
     const navigate = useNavigate()
-    const session = readDisplaySession()
+    const { key } = useLocation()
+    const [session, setSession] = useState(undefined)
+
+    useEffect(() => {
+        let request
+        function refresh() {
+            request?.abort()
+            const controller = new AbortController()
+            request = controller
+            void readSession(controller.signal).then(result => {
+                if (!controller.signal.aborted) setSession(result)
+            })
+        }
+
+        refresh()
+        window.addEventListener('focus', refresh)
+        return () => {
+            request?.abort()
+            window.removeEventListener('focus', refresh)
+        }
+    }, [key])
 
     function signOut() {
         clearSession()
@@ -36,7 +57,7 @@ export default function Navbar() {
                         Sign out
                     </button>
                 </div>
-            ) : (
+            ) : session === null && (
                 <Link className="haven-nav-action haven-nav-signin" to="/">Sign in</Link>
             )}
         </nav>

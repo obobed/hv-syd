@@ -1,54 +1,38 @@
 import Cookies from 'js-cookie'
 
-const SESSION_KEY = 'haven-display-session'
+const COOKIE_PATHS = { 'attendee-id': '/api/v1', 'admin-token': '/api/admin' }
 
-export function readDisplaySession() {
-    try {
-        return JSON.parse(sessionStorage.getItem(SESSION_KEY))
-    } catch {
-        return null
-    }
+function removeCookie(name) {
+    Cookies.remove(name, { path: COOKIE_PATHS[name] })
+    Cookies.remove(name)
 }
 
-export async function saveDisplaySession({ staff, payload, signal }) {
-    // The team endpoint includes first names for attendees who have a team.
-    // Store only the display name for the navbar.
-    let name = staff ? payload.username?.trim() || 'Staff' : 'Attendee'
+export function clearPreviousRole(staff) {
+    removeCookie(staff ? 'attendee-id' : 'admin-token')
+}
 
-    if (!staff) {
-        try {
-            const response = await fetch('/api/v1/team/get', {
-                credentials: 'include',
-                signal: AbortSignal.any([signal, AbortSignal.timeout(1500)]),
-            })
-            if (response.ok) {
-                const team = await response.json()
-                const attendee = team.attendees?.find(member => member.id === payload.id)
-                name = attendee?.first_name?.trim() || name
-            }
-        } catch {
-            // A missing or unavailable team does not prevent sign-in.
-        }
-    }
+async function fetchSession(path, signal) {
+    const response = await fetch(path, { credentials: 'same-origin', cache: 'no-store', signal })
+    if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) return null
+    const session = await response.json()
+    return typeof session.name === 'string' ? session : null
+}
 
-    if (!signal.aborted) {
-        try {
-            sessionStorage.setItem(SESSION_KEY, JSON.stringify({ name }))
-        } catch {
-            // The session cookie still works if browser storage is unavailable.
-        }
+export async function readSession(signal) {
+    const lookupSignal = AbortSignal.any([signal, AbortSignal.timeout(5000)])
+    const [staff, attendee] = await Promise.allSettled([
+        fetchSession('/api/admin/session', lookupSignal),
+        fetchSession('/api/v1/session', lookupSignal),
+    ])
+    if (staff.status === 'fulfilled' && staff.value) return { name: 'Staff' }
+    if (attendee.status === 'fulfilled' && attendee.value) {
+        return { name: attendee.value.name.trim() || 'Attendee' }
     }
+    return null
 }
 
 export function clearSession() {
-    // Login cookies without a Path default to the directory of the login endpoint.
-    Cookies.remove('attendee-id', { path: '/api/v1' })
-    Cookies.remove('admin-token', { path: '/api/admin' })
-    Cookies.remove('attendee-id')
-    Cookies.remove('admin-token')
-    try {
-        sessionStorage.removeItem(SESSION_KEY)
-    } catch {
-        // There is no display state to clear when storage is unavailable.
-    }
+    // Cookies without an explicit Path use the directory of the login endpoint.
+    removeCookie('attendee-id')
+    removeCookie('admin-token')
 }

@@ -66,7 +66,18 @@ pub fn all(
             tokens,
         )
         .or(with_admin_auth(token_env, tokens).and(
-            milestone::set(database_pool)
+            warp::path!("session")
+                .and(warp::get())
+                .map(|| {
+                    warp::reply::with_header(
+                        warp::reply::json(&serde_json::json!({
+                            "name": "Staff"
+                        })),
+                        "Cache-Control",
+                        "no-store",
+                    )
+                })
+                .or(milestone::set(database_pool))
                 .or(asset::create())
                 .or(asset::delete())
                 .or(asset::list())

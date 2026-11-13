@@ -4,6 +4,7 @@ mod markdown;
 
 pub mod admin;
 pub mod attendee;
+pub mod session;
 
 const JSON_MAX_LENGTH_BYTES: u64 = 1024 * 64;
 

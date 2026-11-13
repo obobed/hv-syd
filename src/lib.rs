@@ -34,6 +34,7 @@ pub fn router(config: Config) -> Result<impl Filter<Extract = (impl warp::Reply,
 
     Ok(routes::public_assets()
         .or(routes::guides())
+        .or(routes::session::attendee(&state.database_pool))
         .or(routes::admin::all(state))
         .or(routes::attendee::all(state))
         .recover(error::handle_rejection))

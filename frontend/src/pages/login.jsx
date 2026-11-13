@@ -5,7 +5,7 @@ import scannerWasm from 'zxing-wasm/reader/zxing_reader.wasm?url'
 import logo from '../assets/haven/logo.webp'
 import mascot from '../assets/haven/hedgehog.webp'
 import foreground from '../assets/haven/foreground.webp'
-import { saveDisplaySession } from '../lib/session'
+import { clearPreviousRole } from '../lib/session'
 import './login.css'
 
 // Serve the QR decoder from the app so scanning works without a CDN request.
@@ -207,9 +207,7 @@ export default function Login() {
             } else if (!response.ok) {
                 setError(requestError(response.status, staff))
             } else {
-                clearTimeout(timeout)
-                await saveDisplaySession({ staff, payload, signal: controller.signal })
-                if (controller.signal.aborted) return
+                clearPreviousRole(staff)
                 signedIn = true
                 navigate('/dashboard', { replace: true })
             }

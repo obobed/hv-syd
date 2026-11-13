@@ -1,11 +1,11 @@
-use std::io;
+use std::{convert::Infallible, io};
 #[cfg(debug_assertions)]
 use std::{error::Error as _, sync::Arc};
 
 use serde::ser::SerializeStruct as _;
 use warp::http::StatusCode;
 
-pub async fn handle_rejection(r: warp::Rejection) -> Result<impl warp::Reply, !> {
+pub async fn handle_rejection(r: warp::Rejection) -> Result<impl warp::Reply, Infallible> {
     Ok(Error::from(r))
 }
 
