@@ -10,6 +10,11 @@ export default defineConfig({
         target: "http://localhost:5174",
         changeOrigin: true,
       },
+      "/attend": {
+        target: "https://attend.hackclub.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/hackclub/, ""),
+      },
     },
   },
 });

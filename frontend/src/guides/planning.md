@@ -1,6 +1,6 @@
 Misc
 - Login: login post
-Scan QR code or manually enter attend ID. There will be a super secret admin button for super secret admin login.
+
 
 Attendee:
 - Dashboard: notify post, submission get, team post
@@ -11,7 +11,7 @@ Show all milestones, prizes + stock,
 
 Admin:
 - Dashboard: submissions get, notifications get, token get/post
-List of submissions needing review, status of provisional admin tokens
+List of submissions needing review, ability to extend token duration
 - Milestones: milestone post, asset post
 List of current milestones + prizes, ability to edit
 - Submissions: submission get, submission(id) get, submission(id) post, asset

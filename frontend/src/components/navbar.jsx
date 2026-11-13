@@ -12,6 +12,9 @@ export default function Navbar() {
                 <Link to="/dashboard"  className='navLink'>
                     Dashboard
                 </Link>
+                <Link to='/rollcall' className='navLink'>
+                    Rollcall
+                </Link>
             </div>
         </nav>
     )
