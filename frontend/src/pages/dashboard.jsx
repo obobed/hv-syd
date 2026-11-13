@@ -13,11 +13,16 @@ export default function Dashboard() {
     const [teamName, setTeamName] = useState('')
     const [hasTeam, setHasTeam] = useState(false)
     const [teamInfo, setTeamInfo] = useState({})
+    const [teamOTP, setTeamOTP] = useState('')
 
     const tokenLevel = {
         ADMIN: 'admin',
         ATTENDEE: 'attendee'
     }
+
+    useEffect(() => {
+        teamCheck('/api/v1/team/get')
+    }, [hasTeam])
 
     useEffect(() => {
         getTokens('api/admin/token/list')
@@ -27,8 +32,49 @@ export default function Dashboard() {
         } else {
             // list of all submissions (for a specific team)
         }
-    }, [])
+    }, [isAdmin])
 
+    async function joinTeam(url = '', payload = {}) {
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify(payload)
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
+            }
+
+            setHasTeam(true)
+
+        } catch {
+            console.error(error);
+        }
+    }
+
+    async function requestOTP(url = '') {
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                credentials: 'include'
+            })
+
+            if (!response.ok) {
+                setHasTeam(false)
+                throw new Error(`HTTP error: ${response.status}`);
+            }
+
+            const otp = response.text()
+            setTeamOTP(otp)
+
+        } catch {
+            console.error(error);
+        }
+    }
 
     async function teamCheck(url = '') {
         try {
@@ -40,7 +86,6 @@ export default function Dashboard() {
             if (!response.ok) {
                 if (response.status == 404) {
                     setHasTeam(false)
-                    return
                 }
                 throw new Error(`HTTP error: ${response.status}`);
             }
@@ -115,9 +160,8 @@ export default function Dashboard() {
                 throw new Error(`HTTP error! Status: ${response.status}`)
             }
 
-            const tokenList = await response.text()
-            let parsedTokenList = JSON.parse(tokenList)
-            setTokens(parsedTokenList)
+            const tokenList = await response.json()
+            setTokens(tokenList)
             console.log(tokens)
 
         } catch {
@@ -260,9 +304,50 @@ export default function Dashboard() {
                 <div>
                     <p>list of submissions made + button to see all milestones</p>
                 </div>
-                <div>
-                    <p>team name + member names</p>
-                </div>
+                {hasTeam && (
+                    <div>
+                        <p>{teamOTP}</p>
+                        <p>"uhhh convert the teamInfo into an array so it can go here nealy (list names of team mebbers, and team name)"</p>
+                        <button onClick={() => {
+                            requestOTP('/api/v1/team/otp')
+                        }}
+                        >
+                            Make an OTP Code so your friends can join!
+                        </button>
+                    </div>
+                )}
+
+                {!hasTeam &&(
+                    <div>
+                        <input
+                            type='text'
+                            placeholder='Input OTP Code!'
+                            value={teamOTP}
+                            onChange={(e) => setTeamOTP(e.target.value)}
+                        />
+                        <button onClick={() => {
+                            joinTeam('/api/v1/team/join', {
+                                otp: teamOTP
+                            })
+                        }}>
+                            Join!
+                        </button>
+                        <p> OR </p>
+                        <input
+                            type='text'
+                            placeholder='Team Name'
+                            value={teamName}
+                            onChange={(e) => setTeamName(e.target.value)}
+                        />
+                        <button onClick={() => {
+                            createTeam('/api/v1/team/create', {
+                                teamName: teamName
+                            })
+                        }}>
+                            Create a new team
+                        </button>
+                    </div>
+                )}
             </>
         )}
         </>
