@@ -47,16 +47,15 @@ export default function Login() {
         })
 
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            throw new Error(`HTTP error! Status: ${response.status}`)
         }
         
-        console.log("Login successful! The admin-token cookie is now set.");
-        console.log({response})
+        console.log("Login successful! The admin-token cookie is now set.")
+        console.log(response)
         setIsAdmin(true)
         setIsLoggedIn(true)
       } catch (error) {
-          console.error('Fetch failed:', error.message);
+          console.error('Fetch failed:', error.message)
           setIsAdmin(false)
           setIsLoggedIn(false)
       }

@@ -8,18 +8,23 @@ export default function Dashboard() {
     const [submissions, setSubmissions] = useState([])
     const [tokenValid, setTokenValid] = useState([])
     const [error, setError] = useState('')
+    const [tokens, setTokens] = useState({})
+    const [ascending, setAscending] = useState(false)
 
     const tokenLevel = {
-        ADMIN: 'admin'
+        ADMIN: 'admin',
+        ATTENDEE: 'attendee'
     }
 
     useEffect(() => {
+        getTokens('api/admin/token/list')
+
         if (isAdmin) {
             // list of all submissions ever
         } else {
             // list of all submissions (for a specific team)
         }
-    })
+    }, [])
 
     async function createToken(url = '', payload = {}) {
         console.log(url, payload)
@@ -39,10 +44,35 @@ export default function Dashboard() {
             }
 
             const token = await response.text()
+            console.log("token")
             console.log(token)
+            getTokens('/api/admin/token/list')
 
         } catch {
             console.error(error);
+        }
+    }
+
+    async function getTokens(url = '') {
+        console.log(url)
+
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                credentials: 'include'
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`)
+            }
+
+            const tokenList = await response.text()
+            let parsedTokenList = JSON.parse(tokenList)
+            setTokens(parsedTokenList)
+            console.log(tokens)
+
+        } catch {
+            console.error('Fetch failed', error.message)
         }
     }
 
@@ -58,16 +88,56 @@ export default function Dashboard() {
                     <p>unreviewed submissions</p>
                 </div>
                 <div>
-                    <button onClick={() => 
-                        createToken('api/admin/token/create', 
-                            {
-                                level: tokenLevel.ADMIN,
-                                valid_for: tokenValid
-                            }
-                        )
-                    }>
-                        Create Token
+                    <dialog id='tokenCreator'>
+                        <button onClick={() => 
+                            createToken('api/admin/token/create', 
+                                {
+                                    level: tokenLevel.ADMIN,
+                                    valid_for: [100000, 1000]
+                                }
+                            )
+                        }>
+                            Create Token
+                        </button>
+                        <button command='close' commandfor='tokenCreator'>
+                            X
+                        </button>
+                    </dialog>
+
+                    <button command='show-modal' commandfor='tokenCreator'>
+                        Create New Token
                     </button>
+                    <button onClick={() =>
+                        getTokens('/api/admin/token/list')
+                    }
+                    >
+                        Refresh Tokens
+                    </button>
+                    <button onClick={() => setAscending(!ascending)}>
+                        {ascending ? 'Expires First' : 'Expires Last'}
+                    </button>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Token ID</th>
+                                <th>Expiry</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {Object.entries(tokens)
+                                .sort(([, a], [, b]) => 
+                                    ascending
+                                    ? b.exp.localeCompare(a.exp)
+                                    : a.exp.localeCompare(b.exp)
+                                )
+                                .map(([tokenId, metadata]) => (
+                                <tr key={tokenId}>
+                                    <td><code>{tokenId}</code></td>
+                                    <td>{new Date(metadata.exp).toLocaleString()}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </>
         )}
