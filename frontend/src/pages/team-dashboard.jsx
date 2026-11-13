@@ -352,7 +352,7 @@ export default function TeamDashboard() {
                 )}
 
                 {team === null && (
-                    <div className="haven-team-grid haven-team-setup">
+                    <div className="haven-team-setup">
                         <form className="haven-team-card" aria-labelledby="join-team-title" onSubmit={event => submitMembership(event, 'join')}>
                             <div className="haven-team-avatars" aria-hidden="true">
                                 <span><img src={mascot} alt="" /></span>
@@ -374,6 +374,8 @@ export default function TeamDashboard() {
                             </button>
                             {error?.action === 'join' && <p className="haven-team-error" role="alert" id="join-team-error">{error.message}</p>}
                         </form>
+
+                        <span className="haven-team-or">or</span>
 
                         <form className="haven-team-card" aria-labelledby="create-team-title" onSubmit={event => submitMembership(event, 'create')}>
                             <div className="haven-team-campfire">
