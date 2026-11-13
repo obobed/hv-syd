@@ -55,6 +55,7 @@ pub fn all(
         database_pool,
         token_env,
         tokens,
+        otps: _,
     } = state;
 
     warp::path!("api" / "admin" / ..).and(

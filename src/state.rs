@@ -1,3 +1,8 @@
+use std::{
+    collections::HashMap,
+    sync::{Arc, RwLock},
+};
+
 use heed::{
     EnvOpenOptions,
     types::{SerdeRmp, Str},
@@ -12,6 +17,7 @@ const DATABASE_PATH: &str = "database.db";
 const TOKEN_STORE_PATH: &str = "tokens";
 
 pub type TokenMap = heed::Database<Str, SerdeRmp<TokenMetadata>>;
+pub type OtpMap = Arc<RwLock<HashMap<String, String>>>;
 
 pub(crate) struct State {
     pub config: Config,
@@ -20,6 +26,8 @@ pub(crate) struct State {
 
     pub token_env: heed::Env,
     pub tokens: TokenMap,
+
+    pub otps: OtpMap,
 }
 
 impl State {
@@ -42,6 +50,8 @@ impl State {
         let tokens = token_env.create_database(&mut wtxn, None)?;
         wtxn.commit()?;
 
+        let otps = OtpMap::new(RwLock::new(HashMap::new()));
+
         Ok(State {
             config,
 
@@ -49,6 +59,8 @@ impl State {
 
             token_env,
             tokens,
+
+            otps,
         })
     }
 }

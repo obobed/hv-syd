@@ -249,3 +249,20 @@ impl From<io::Error> for Error {
         }
     }
 }
+
+impl<T> From<std::sync::PoisonError<T>> for Error {
+    fn from(value: std::sync::PoisonError<T>) -> Self {
+        #[cfg(not(debug_assertions))]
+        {
+            Error::InternalServerError
+        }
+
+        #[cfg(debug_assertions)]
+        {
+            Error::Custom(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "mutex poisoned".to_string(),
+            )
+        }
+    }
+}

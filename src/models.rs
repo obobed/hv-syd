@@ -63,7 +63,6 @@ pub struct TokenMetadata {
 #[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 pub enum Level {
     Admin = 0,
-    Attendee = 1,
 }
 
 impl TokenMetadata {
