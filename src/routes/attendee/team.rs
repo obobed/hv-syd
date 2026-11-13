@@ -148,12 +148,23 @@ pub fn join(
                 return Err(Error::Conflict);
             }
 
-            let new_team = {
+            let new_team_name = {
                 let guard = otps.read()?;
                 guard.get(&body.otp).ok_or(Error::NotFound)?.to_owned()
             };
 
-            query_file!("sql/update-attendee-team.sql", &id, &new_team)
+            let new_team = query_file_as!(TeamDetails, "sql/team-details.sql", &new_team_name)
+                .fetch_one(&db)
+                .await?;
+
+            if new_team.attendees.is_some() && new_team.attendees.unwrap().len() >= 3 {
+                return Err(Error::Custom(
+                    400.try_into().unwrap(),
+                    String::from("The maximum number of attendees in a team is 3."),
+                ));
+            }
+
+            query_file!("sql/update-attendee-team.sql", &id, &new_team_name)
                 .execute(&db)
                 .await?;
 
