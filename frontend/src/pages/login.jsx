@@ -19,7 +19,7 @@ export default function Login() {
     useEffect(() => {
       // Check if user is already logged in
       if (isLoggedIn) {
-        // navigate('/dashboard', {replace: true})
+        navigate('/dashboard', {replace: true})
       } 
     }, [isLoggedIn, navigate])
 
@@ -52,6 +52,7 @@ export default function Login() {
         }
         
         console.log("Login successful! The admin-token cookie is now set.");
+        console.log({response})
         setIsAdmin(true)
         setIsLoggedIn(true)
       } catch (error) {
@@ -140,10 +141,14 @@ export default function Login() {
         <button
           type='button'
           onClick={() =>
-            adminLogin("/api/admin/login", {
-              username: username,
-              password: password
-            })
+            adminLogin("/api/admin/login", 
+              adminToken
+                ? { token: adminToken}
+                : {
+                  username: username,
+                  password: password
+                }
+            )
           }
         >
           Confirm

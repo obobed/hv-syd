@@ -6,13 +6,12 @@ export default function Dashboard() {
     const [isAdmin, setIsAdmin] = useState(false)
     const [hasTeam, setHasTeam] = useState(false) 
     const [submissions, setSubmissions] = useState([])
+    const [tokenValid, setTokenValid] = useState([])
+    const [error, setError] = useState('')
 
-    useEffect(() => {
-        const token = Cookies.get('admin-token');
-        if (token) {
-            setIsAdmin(true)
-        }
-    })
+    const tokenLevel = {
+        ADMIN: 'admin'
+    }
 
     useEffect(() => {
         if (isAdmin) {
@@ -22,14 +21,28 @@ export default function Dashboard() {
         }
     })
 
-    useEffect(() => {
-        // get notifications somehow
-    })
+    async function createToken(url = '', payload = {}) {
+        console.log(url, payload)
 
-    async function sortSubmissions() {
-        for (let i = 0; i < submissions.length; i++) {
-            const currentSubmission = submissions[i]
-            currentSubmission = JSON.parse(currentSubmission)
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: 'include',
+                body: JSON.stringify(payload)
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
+            }
+
+            const token = await response.text()
+            console.log(token)
+
+        } catch {
+            console.error(error);
         }
     }
 
@@ -45,7 +58,16 @@ export default function Dashboard() {
                     <p>unreviewed submissions</p>
                 </div>
                 <div>
-                    <p>tokens</p>
+                    <button onClick={() => 
+                        createToken('api/admin/token/create', 
+                            {
+                                level: tokenLevel.ADMIN,
+                                valid_for: tokenValid
+                            }
+                        )
+                    }>
+                        explode
+                    </button>
                 </div>
             </>
         )}
