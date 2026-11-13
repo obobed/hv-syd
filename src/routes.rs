@@ -25,3 +25,7 @@ pub fn guides() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Reje
         .and(warp::fs::dir(crate::GUIDES_FOLDER))
         .then(markdown::handler)
 }
+
+pub fn frontend() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+    warp::get().and(warp::fs::dir("dist"))
+}

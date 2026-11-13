@@ -37,6 +37,7 @@ pub fn router(config: Config) -> Result<impl Filter<Extract = (impl warp::Reply,
         .or(routes::session::attendee(&state.database_pool))
         .or(routes::admin::all(state))
         .or(routes::attendee::all(state))
+        .or(routes::frontend())
         .recover(error::handle_rejection))
 }
 
