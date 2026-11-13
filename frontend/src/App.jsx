@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useOutletContext } from 'react-router'
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router'
+import HavenScene from './components/haven-scene'
 import Navbar from './components/navbar'
 import Login from './pages/login'
 import Dashboard from './pages/dashboard'
-import Rollcall from './pages/rollcall'
 import { readSession } from './lib/session'
 import './App.css'
 
 function WithNavbar() {
-  const { key } = useLocation()
+  const { pathname } = useLocation()
   const [session, setSession] = useState(undefined)
 
   useEffect(() => {
@@ -28,21 +28,15 @@ function WithNavbar() {
       request?.abort()
       window.removeEventListener('focus', refresh)
     }
-  }, [key])
+  }, [pathname])
 
   return (
     <div className="haven-app-shell">
+      <HavenScene />
       <Navbar session={session} />
       <Outlet context={session} />
     </div>
   )
-}
-
-function StaffRollcall() {
-  const session = useOutletContext()
-  if (session === undefined) return <p role="status">Checking your session…</p>
-  if (session?.role !== 'staff') return <Navigate to="/dashboard" replace />
-  return <Rollcall />
 }
 
 function App() {
@@ -52,7 +46,7 @@ function App() {
         <Route path='/' element={<Login />} />
         <Route element={<WithNavbar />}>
           <Route path='/dashboard' element={<Dashboard />} />
-          <Route path='/rollcall' element={<StaffRollcall />} />
+          <Route path='/rollcall' element={<Navigate to="/dashboard?view=roster" replace />} />
         </Route>
       </Routes>
     </BrowserRouter>

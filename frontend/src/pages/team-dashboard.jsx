@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import campfire from '../assets/haven/campfire.png'
 import mascot from '../assets/haven/hedgehog.webp'
-import HavenScene from '../components/haven-scene'
 import Submissions from './submissions'
 import './team-dashboard.css'
 
@@ -340,7 +339,6 @@ export default function TeamDashboard() {
 
     return (
         <main className="haven-team" aria-label="Attendee dashboard">
-            <HavenScene />
             <div className="haven-team-shell">
                 {team === undefined && (
                     <section className="haven-team-card haven-team-loading" aria-label="Team status">

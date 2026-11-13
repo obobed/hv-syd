@@ -1,0 +1,288 @@
+.haven-staff-shell {
+    width: min(100%, 760px);
+}
+
+.haven-staff .haven-team-card {
+    padding: clamp(16px, 2.4vw, 24px);
+    overflow-wrap: anywhere;
+}
+
+.haven-staff-heading,
+.haven-staff-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+}
+
+.haven-staff-heading {
+    justify-content: space-between;
+}
+
+.haven-staff-heading p {
+    margin-top: 4px;
+    font-size: 16px;
+}
+
+.haven-staff-notice:empty {
+    margin-block-end: -12px;
+}
+
+.haven-staff-filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    padding: 4px;
+    border-radius: 12px;
+    corner-shape: squircle;
+    background: #f4e9d6;
+}
+
+.haven-staff .haven-staff-filters button {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2px 5px;
+    padding: 4px 2px;
+    background: transparent;
+    color: var(--team-ink);
+    font-size: clamp(14px, 2vw, 16px);
+}
+
+.haven-staff-filter-count {
+    min-width: 18px;
+    padding-inline: 4px;
+    border-radius: 6px;
+    corner-shape: squircle;
+    background: #ead8ba;
+    font-size: 12px;
+    line-height: 18px;
+    font-variant-numeric: tabular-nums;
+}
+
+.haven-staff .haven-staff-filters button[aria-pressed='true'] {
+    border-color: var(--team-line);
+    background: #fffaf0;
+}
+
+.haven-staff-review-list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.haven-staff-review {
+    padding: 10px 12px;
+    border: 1px solid var(--team-line);
+    border-radius: 12px;
+    corner-shape: squircle;
+    background: #fff5e3;
+}
+
+.haven-staff-review .haven-staff-heading h3 {
+    color: var(--team-ink);
+    font-size: 20px;
+}
+
+.haven-staff-team-name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+}
+
+.haven-team-avatars.haven-staff-avatars {
+    --team-avatar-size: 26px;
+    --team-avatar-overlap: 5px;
+    flex-wrap: wrap;
+    width: auto;
+    height: auto;
+    margin: 0;
+}
+
+.haven-staff-avatars > span {
+    flex: 0 0 var(--team-avatar-size);
+}
+
+.haven-staff-review-details,
+.haven-staff-attachment {
+    display: grid;
+    gap: 8px;
+}
+
+.haven-staff-review-details {
+    justify-items: start;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--team-line);
+}
+
+.haven-staff-description {
+    white-space: pre-wrap;
+}
+
+.haven-staff-attachment {
+    width: 100%;
+}
+
+.haven-staff-attachment :is(img, video) {
+    display: block;
+    width: 100%;
+    max-height: 360px;
+    border-radius: 12px;
+    corner-shape: squircle;
+    background: #342014;
+    object-fit: contain;
+}
+
+.haven-staff-review-actions {
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.haven-staff .haven-staff-review-actions :is(a, button) {
+    padding-inline: 8px;
+    font-size: 15px;
+}
+
+.haven-staff-review-actions a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 7px 16px;
+    border: 1px solid;
+    border-radius: 12px;
+    corner-shape: squircle;
+    text-decoration: none;
+}
+
+.haven-staff-review-actions a:focus-visible,
+.haven-staff-tokens select:focus-visible {
+    outline: 2px solid var(--team-accent);
+    outline-offset: 3px;
+}
+
+@media (hover: hover) {
+    .haven-team .haven-staff-review-actions a:hover {
+        background: #ffe7ae;
+    }
+}
+
+.haven-staff-token-list {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.haven-staff-tokens .haven-staff-heading {
+    flex-wrap: nowrap;
+    gap: 8px;
+}
+
+.haven-staff-tokens .haven-staff-heading h2 {
+    font-size: clamp(1.6rem, 3.4vw, 2.3rem);
+}
+
+.haven-staff-tokens .haven-staff-heading button {
+    flex: none;
+    padding-inline: 10px;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+.haven-staff-token {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 4px 4px 10px;
+    border: 1px solid var(--team-line);
+    border-radius: 12px;
+    corner-shape: squircle;
+    background: #fff5e3;
+}
+
+.haven-staff-token-details {
+    display: grid;
+    line-height: 1.2;
+}
+
+.haven-staff-token-details strong {
+    font-size: 16px;
+}
+
+.haven-staff-token-details p {
+    font-size: 14px;
+}
+
+.haven-staff-token-secret {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 4px 4px 10px;
+    border: 1px solid var(--team-line);
+    border-radius: 12px;
+    corner-shape: squircle;
+    background: #fff5e3;
+}
+
+.haven-staff-token-secret code {
+    padding: 0;
+    background: none;
+    color: var(--team-ink);
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.haven-staff-copy-status {
+    font-size: 14px;
+}
+
+.haven-staff-copy-status:empty {
+    margin-block-end: -12px;
+}
+
+.haven-staff .haven-staff-icon-button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    padding: 0;
+}
+
+.haven-staff-icon-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.haven-staff-icon-label > svg {
+    flex: none;
+}
+
+.haven-staff-token-icon {
+    flex: none;
+}
+
+.haven-staff-token-duration {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px;
+}
+
+.haven-staff-tokens select {
+    width: 100%;
+    min-height: 44px;
+    padding-inline: 8px;
+    border: 1px solid #bd9465;
+    border-radius: 12px;
+    corner-shape: squircle;
+    background: #fff;
+    color: var(--team-ink);
+    font: inherit;
+}

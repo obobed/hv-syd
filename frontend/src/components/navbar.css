@@ -1,37 +1,56 @@
 .navbg {
+    position: relative;
     box-sizing: border-box;
     display: grid;
-    grid-template-columns: auto auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
-    gap: 8px clamp(12px, 2.5vw, 28px);
+    gap: 8px clamp(10px, 2vw, 22px);
     min-height: 70px;
-    padding-block: 6px;
-    padding-inline: max(clamp(12px, 4vw, 56px), (100% - var(--haven-content-width)) / 2);
-    background:
-        var(--haven-forest-tint),
-        url('../assets/haven/forest.webp') center 26% / cover no-repeat #843b19;
+    padding-block: clamp(16px, 1.7vw, 24px) 6px;
+    padding-inline: clamp(20px, 2.4vw, 32px);
     color: #fff7e8;
     font: 17px/1.2 'Jua Extras', Jua, ui-rounded, system-ui, sans-serif;
+}
+
+.navbg-staff {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
 }
 
 .haven-nav-brand {
     display: flex;
     align-items: center;
+    justify-self: start;
+    gap: 10px;
     border-radius: 10px;
     corner-shape: squircle;
+    color: inherit;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
-.navbg .logo {
+.haven-nav-brand img {
     display: block;
-    width: 54px;
-    height: 54px;
+    flex: none;
+    height: auto;
+    filter: drop-shadow(0 1px 2px #50260f99);
+}
+
+.haven-nav-flag {
+    width: clamp(80px, 9vw, 108px);
+}
+
+.haven-nav-logo {
+    width: clamp(48px, 5.4vw, 60px);
 }
 
 .haven-nav-links {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     gap: 4px;
+    padding: 4px;
+    border-radius: 32px;
+    corner-shape: squircle;
+    background: #432516db;
 }
 
 .haven-nav-links a {
@@ -39,17 +58,17 @@
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-    padding: 0 12px;
-    border-radius: 12px;
+    justify-content: center;
+    padding: 0 15px;
+    border-radius: 24px;
     corner-shape: squircle;
     color: inherit;
     text-decoration: none;
 }
 
 .haven-nav-links a[aria-current='page'] {
-    background: #ffd05926;
-    color: #ffe382;
-    box-shadow: inset 0 0 0 1px #ffd05940;
+    background: #fff7e8;
+    color: #50260f;
 }
 
 .haven-nav-account {
@@ -57,6 +76,7 @@
     align-items: center;
     gap: 10px;
     min-width: 0;
+    max-width: 100%;
     justify-self: end;
 }
 
@@ -78,10 +98,12 @@
 }
 
 .haven-nav-name {
+    min-width: 0;
     max-width: min(20vw, 180px);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    text-shadow: 0 1px 3px #50260f;
 }
 
 .haven-nav-action {
@@ -103,7 +125,7 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-    .haven-nav-links a:hover {
+    .haven-nav-links a:hover:not([aria-current='page']) {
         color: #ffe382;
     }
 
@@ -128,9 +150,8 @@
         font-size: 16px;
     }
 
-    .navbg .logo {
-        width: 46px;
-        height: 46px;
+    .haven-nav-brand {
+        gap: 6px;
     }
 
     .haven-nav-links a {
@@ -156,12 +177,18 @@
 
 }
 
-@media (max-width: 420px) {
+@media (max-width: 690px) {
     .navbg-staff {
         grid-template-columns: auto minmax(0, 1fr);
+        padding-block-end: 8px;
     }
 
     .navbg-staff .haven-nav-links {
         grid-area: 2 / 1 / auto / -1;
+        justify-self: center;
+    }
+
+    .navbg-staff .haven-nav-links a {
+        min-width: 72px;
     }
 }

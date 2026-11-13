@@ -1,12 +1,16 @@
-import { Link, NavLink, useNavigate } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 import logo from '../assets/hvsydLogoTrans.svg'
+import flag from '../assets/haven/hack-club-flag.png'
 import avatar from '../assets/haven/hedgehog.webp'
 import { clearSession } from '../lib/session'
+import { readStaffSection, staffSections } from '../lib/staff-sections'
 import './navbar.css'
 
 export default function Navbar({ session }) {
     const navigate = useNavigate()
+    const { search } = useLocation()
     const isStaff = session?.role === 'staff'
+    const section = isStaff ? readStaffSection(search) : null
 
     function signOut() {
         clearSession()
@@ -16,12 +20,16 @@ export default function Navbar({ session }) {
     return (
         <nav className={isStaff ? 'navbg navbg-staff' : 'navbg'} aria-label="Main navigation">
             <Link to="/dashboard" className="haven-nav-brand" aria-label="Haven Sydney dashboard">
-                <img src={logo} alt="" className="logo" />
+                <img src={flag} alt="" className="haven-nav-flag" width="526" height="184" />
+                <img src={logo} alt="" className="haven-nav-logo" width="1402" height="1402" />
             </Link>
-            <div className="haven-nav-links">
-                <NavLink to="/dashboard" end>Dashboard</NavLink>
-                {isStaff && <NavLink to="/rollcall" end>Rollcall</NavLink>}
-            </div>
+            {isStaff && (
+                <div className="haven-nav-links" role="group" aria-label="Staff dashboard sections">
+                    {staffSections.map(({ id, label, to }) => (
+                        <Link key={id} to={to} aria-current={section === id ? 'page' : undefined}>{label}</Link>
+                    ))}
+                </div>
+            )}
             {session ? (
                 <div className="haven-nav-account">
                     <span className="haven-nav-avatar">
