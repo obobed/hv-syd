@@ -1,4 +1,5 @@
 :root {
+  --haven-content-width: 960px;
   --haven-forest-tint: linear-gradient(90deg, #743114ed, #713018bb);
   --text: #000000;
   --text-h: #08060d;

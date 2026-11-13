@@ -9,13 +9,21 @@
     --team-orange: #b83d0e;
     --team-line: #e8cda6;
     --team-display: 'Darumadrop One', 'Jua Extras', Jua, ui-rounded, system-ui, sans-serif;
+    --haven-mascot-right: auto;
+    --haven-mascot-width: clamp(72px, 11vw, 152px);
+    position: relative;
     flex: 1;
-    padding: clamp(20px, 3vw, 36px) 16px;
-    background: var(--haven-forest-tint),
-        url('../assets/haven/forest.webp') top center / cover no-repeat #62691e;
+    padding: clamp(20px, 3vw, 36px) clamp(16px, 2vw, 28px);
+    padding-block-end: clamp(58px, 8vw, 90px);
+    background: url('../assets/haven/forest.webp') top center / cover no-repeat #62691e;
     color: var(--team-ink);
     font: 18px/1.4 'Jua Extras', Jua, ui-rounded, system-ui, sans-serif;
     letter-spacing: normal;
+}
+
+.haven-team .haven-scene-mascot {
+    left: 9%;
+    transform: none;
 }
 
 .haven-team,
@@ -24,7 +32,8 @@
 }
 
 .haven-team-shell {
-    width: min(100%, 960px);
+    position: relative;
+    width: min(100%, var(--haven-content-width));
     margin-inline: auto;
 }
 
@@ -59,9 +68,12 @@
 
 .haven-team-or {
     place-self: center;
-    color: #fff7e8;
+    padding-inline: 6px;
+    border-radius: 8px;
+    corner-shape: squircle;
+    background: #fffaf0;
+    color: var(--team-ink);
     line-height: 24px;
-    text-shadow: 0 1px 3px #4c291a;
 }
 
 .haven-team-setup .haven-team-card {

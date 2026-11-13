@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import campfire from '../assets/haven/campfire.png'
 import mascot from '../assets/haven/hedgehog.webp'
+import HavenScene from '../components/haven-scene'
+import Submissions from './submissions'
 import './team-dashboard.css'
 
 const inviteCodeLength = 4
@@ -337,7 +339,8 @@ export default function TeamDashboard() {
     const loading = team === undefined && !error
 
     return (
-        <main className="haven-team" aria-label="Team dashboard">
+        <main className="haven-team" aria-label="Attendee dashboard">
+            <HavenScene />
             <div className="haven-team-shell">
                 {team === undefined && (
                     <section className="haven-team-card haven-team-loading" aria-label="Team status">
@@ -396,30 +399,33 @@ export default function TeamDashboard() {
                 )}
 
                 {team && (
-                    <section className="haven-team-card haven-team-roster" aria-labelledby="team-name-title">
-                        <div className="haven-team-name-row">
-                            <h2 id="team-name-title">{team.team_name}</h2>
-                            {team.can_disband === true && (
-                                <DisbandTeam key={team.team_name} teamName={team.team_name} pending={Boolean(pending)}
-                                    disbanding={pending === 'disband'}
-                                    error={error?.action === 'disband' ? error.message : undefined}
-                                    onOpen={() => setError(current => current?.action === 'disband' ? null : current)}
-                                    onDisband={disbandTeam} />
-                            )}
-                        </div>
-                        <h3>Team members</h3>
-                        {members.length ? (
-                            <ul className="haven-team-members" role="list">
-                                {members.map(member => (
-                                    <li key={member.id}>
-                                        <span className="haven-team-avatar"><img src={mascot} alt="" /></span>
-                                        {[member.first_name, member.last_name].filter(Boolean).join(' ')}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : <p>No members listed yet.</p>}
-                        <TeamInvite key={team.team_name} disabled={Boolean(pending)} />
-                    </section>
+                    <div className="haven-attendee-dashboard">
+                        <section className="haven-team-card haven-team-roster" aria-labelledby="team-name-title">
+                            <div className="haven-team-name-row">
+                                <h2 id="team-name-title">{team.team_name}</h2>
+                                {team.can_disband === true && (
+                                    <DisbandTeam key={team.team_name} teamName={team.team_name} pending={Boolean(pending)}
+                                        disbanding={pending === 'disband'}
+                                        error={error?.action === 'disband' ? error.message : undefined}
+                                        onOpen={() => setError(current => current?.action === 'disband' ? null : current)}
+                                        onDisband={disbandTeam} />
+                                )}
+                            </div>
+                            <h3>Team members</h3>
+                            {members.length ? (
+                                <ul className="haven-team-members" role="list">
+                                    {members.map(member => (
+                                        <li key={member.id}>
+                                            <span className="haven-team-avatar"><img src={mascot} alt="" /></span>
+                                            {[member.first_name, member.last_name].filter(Boolean).join(' ')}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : <p>No members listed yet.</p>}
+                            <TeamInvite key={team.team_name} disabled={Boolean(pending)} />
+                        </section>
+                        <Submissions key={team.team_name} teamName={team.team_name} />
+                    </div>
                 )}
             </div>
         </main>

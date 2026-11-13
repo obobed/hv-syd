@@ -1,0 +1,259 @@
+.haven-attendee-dashboard {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    align-items: start;
+    gap: 16px;
+}
+
+.haven-attendee-dashboard .haven-team-roster {
+    width: 100%;
+}
+
+.haven-submission-stack {
+    display: grid;
+    min-width: 0;
+    gap: 12px;
+    overflow-wrap: anywhere;
+}
+
+.haven-team .haven-submission-stack > .haven-team-card {
+    gap: 8px;
+    padding: clamp(14px, 2.4vw, 22px);
+}
+
+.haven-submission-notice:empty {
+    margin-block-end: -8px;
+}
+
+.haven-milestone-progress,
+.haven-milestone-content {
+    display: grid;
+    gap: 8px;
+}
+
+.haven-milestone-progress {
+    font-size: 16px;
+}
+
+.haven-milestone-meter {
+    display: flex;
+    gap: 4px;
+}
+
+.haven-milestone-meter span {
+    flex: 1;
+    height: 7px;
+    border-radius: 4px;
+    corner-shape: squircle;
+    background: #ebddc5;
+}
+
+.haven-milestone-meter [data-status='approved'] {
+    background: #607132;
+}
+
+.haven-milestone-meter [data-status='review'] {
+    background: #c28c36;
+}
+
+.haven-milestone-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--team-line);
+}
+
+.haven-milestone-list > li + li {
+    border-top: 1px solid var(--team-line);
+}
+
+.haven-milestone-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0 10px;
+}
+
+.haven-milestone-number {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    margin-block-start: 9px;
+    border-radius: 8px;
+    corner-shape: squircle;
+    background: #f4e9d6;
+    color: var(--team-muted);
+    font-family: var(--team-display);
+    font-size: 17px;
+}
+
+.haven-team .haven-milestone-submit {
+    display: grid;
+    place-items: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--team-ink);
+    font-size: 16px;
+}
+
+.haven-milestone-submit span {
+    display: grid;
+    place-items: center;
+    min-height: 32px;
+    padding: 2px 12px;
+    border: 1px solid var(--team-line);
+    border-radius: 10px;
+    corner-shape: squircle;
+    background: #fff0cc;
+}
+
+.haven-milestone-submit:not(:disabled):active span {
+    background: #ffdf95;
+}
+
+.haven-milestone-title,
+.haven-milestone-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+}
+
+.haven-milestone-summary {
+    border-radius: 8px;
+    corner-shape: squircle;
+    cursor: pointer;
+    list-style: none;
+}
+
+.haven-milestone-summary::-webkit-details-marker {
+    display: none;
+}
+
+.haven-milestone-summary::after {
+    content: '';
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+    margin: 0 3px 4px 2px;
+    border: solid var(--team-muted);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+details[open] > .haven-milestone-summary::after {
+    margin-block: 4px 0;
+    transform: rotate(225deg);
+}
+
+.haven-milestone-summary:focus-visible,
+.haven-milestone-title:focus-visible,
+.haven-showcase-heading h2:focus-visible {
+    outline: 2px solid var(--team-accent);
+    outline-offset: 2px;
+}
+
+.haven-milestone-list .haven-milestone-content {
+    padding: 2px 0 10px;
+}
+
+.haven-milestone-content {
+    justify-items: start;
+}
+
+.haven-milestone-status {
+    align-self: start;
+    padding: 3px 9px;
+    border-radius: 8px;
+    corner-shape: squircle;
+    background: #f8ecd8;
+    color: var(--team-ink);
+    font-size: 14px;
+}
+
+.haven-milestone-row > .haven-milestone-status {
+    margin-block-start: 9px;
+}
+
+.haven-milestone-status[data-status='approved'] {
+    background: #e9efcb;
+    color: #344019;
+}
+
+.haven-milestone-status[data-status='review'] {
+    background: #f8e7ba;
+    color: #633c13;
+}
+
+.haven-milestone-content ul {
+    margin: 0;
+    padding-inline-start: 22px;
+}
+
+.haven-milestone-content .haven-submission-description {
+    white-space: pre-wrap;
+}
+
+.haven-showcase {
+    border-color: #d39d51;
+    background: #fff0cc;
+    box-shadow: 0 4px 0 #d39d51;
+}
+
+.haven-milestones-heading,
+.haven-showcase-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px 12px;
+}
+
+.haven-milestones-heading a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 16px;
+}
+
+.haven-submission-link {
+    color: var(--team-accent);
+}
+
+.haven-submission-form {
+    display: grid;
+    gap: 8px;
+    width: 100%;
+}
+
+.haven-milestone-row > .haven-submission-form {
+    grid-column: 1 / -1;
+    padding-block: 4px 8px;
+}
+
+.haven-submission-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+@media (hover: hover) {
+    .haven-milestone-summary:hover {
+        background: #fbf1df;
+    }
+
+    .haven-milestone-submit:hover:not(:disabled):not(:active) span {
+        background: #ffe7ae;
+    }
+}
+
+@media (max-width: 700px) {
+    .haven-attendee-dashboard {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

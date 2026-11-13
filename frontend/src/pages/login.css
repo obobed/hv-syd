@@ -28,14 +28,10 @@
     --body: 'Jua Extras', Jua, ui-rounded, system-ui, sans-serif;
     --green: #b8c220;
     --orange: #ed5615;
-    --yellow: #ffd059;
     --butter: #ffe382;
     --ink: #50260f;
     --muted: #704425;
     --accent-ink: #9b3410;
-    --frame-offset: clamp(8px, 1.1vw, 16px);
-    --frame-gap: clamp(12px, 1.1vw, 16px);
-    --frame-weight: clamp(3px, .35vw, 5px);
     position: relative;
     isolation: isolate;
     display: grid;
@@ -52,28 +48,6 @@
 .haven-login,
 .haven-login * {
     box-sizing: border-box;
-}
-
-/* The open-corner rule frame from Haven's app.css. */
-.haven-login::before,
-.haven-login::after {
-    content: '';
-    position: absolute;
-    pointer-events: none;
-    background-repeat: no-repeat;
-    background-image: linear-gradient(var(--yellow), var(--yellow)), linear-gradient(var(--yellow), var(--yellow));
-}
-
-.haven-login::before {
-    inset: var(--frame-offset) calc(var(--frame-offset) + var(--frame-gap));
-    background-size: 100% var(--frame-weight);
-    background-position: left top, left bottom;
-}
-
-.haven-login::after {
-    inset: calc(var(--frame-offset) + var(--frame-gap)) var(--frame-offset);
-    background-size: var(--frame-weight) 100%;
-    background-position: left top, right top;
 }
 
 .haven-login-shell {
@@ -104,28 +78,6 @@
     letter-spacing: -.05em;
     margin-left: 14%;
     text-shadow: 0 0 5px #ae3e0780;
-}
-
-.haven-hero-mascot,
-.haven-hero-foreground {
-    position: absolute;
-    pointer-events: none;
-    user-select: none;
-    height: auto;
-}
-
-.haven-hero-mascot {
-    right: 9.6%;
-    bottom: 0;
-    width: clamp(105px, 14vw, 224px);
-    transform: scaleX(-1);
-}
-
-.haven-hero-foreground {
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    transform: translateY(55%);
 }
 
 .haven-login-panel {
@@ -409,17 +361,6 @@
 
     .haven-hero-brand span {
         font-size: clamp(1.65rem, 7vw, 2.75rem);
-    }
-
-    .haven-hero-mascot {
-        right: 7%;
-        width: 96px;
-    }
-
-    .haven-hero-foreground {
-        min-width: 550px;
-        left: 50%;
-        transform: translate(-50%, 55%);
     }
 
     .haven-login-heading {

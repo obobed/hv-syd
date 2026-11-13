@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router'
 import { Scanner, setZXingModuleOverrides } from '@yudiel/react-qr-scanner'
 import scannerWasm from 'zxing-wasm/reader/zxing_reader.wasm?url'
 import logo from '../assets/haven/logo.webp'
-import mascot from '../assets/haven/hedgehog.webp'
-import foreground from '../assets/haven/foreground.webp'
+import HavenScene from '../components/haven-scene'
 import { clearPreviousRole } from '../lib/session'
 import './login.css'
 
@@ -69,17 +68,13 @@ function Icon({ name, size = 18 }) {
     )
 }
 
-// The official site's Hero.svelte lockup, rule frame, and decorative artwork.
+// The official site's Hero.svelte logo lockup.
 function HavenHeroBrand() {
     return (
-        <>
-            <div className="haven-hero-brand">
-                <img src={logo} alt="Hack Club Haven" width="762" height="491" />
-                <span>Sydney</span>
-            </div>
-            <img className="haven-hero-mascot" src={mascot} alt="" width="422" height="308" />
-            <img className="haven-hero-foreground" src={foreground} alt="" width="1414" height="501" />
-        </>
+        <div className="haven-hero-brand">
+            <img src={logo} alt="Hack Club Haven" width="762" height="491" />
+            <span>Sydney</span>
+        </div>
     )
 }
 
@@ -262,6 +257,7 @@ export default function Login() {
 
     return (
         <main className="haven-login">
+            <HavenScene />
             <div className="haven-login-shell">
                 <HavenHeroBrand />
 
