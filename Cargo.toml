@@ -32,6 +32,7 @@ pretty_env_logger = "0.5.0"
 # test test::markdown_rs ... bench:   1,440,134.05 ns/iter (+/- 47,630.34)
 pulldown-cmark = { version = "0.13.4", default-features = false, features = ["html"] }
 
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
 sqlx = { version = "0.9.0", features = ["json", "runtime-tokio", "sqlite"] }

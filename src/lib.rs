@@ -80,9 +80,24 @@ fn initialise_folders() -> Result<(), Error> {
 
 fn initialise_db(state: &State) -> Result<(), Error> {
     pollster::block_on(async {
+        let mut transaction = state.database_pool.begin_with("BEGIN IMMEDIATE").await?;
         sqlx::query_file!("sql/create.sql")
-            .execute(&state.database_pool)
+            .execute(&mut *transaction)
             .await?;
+        let has_rejection: bool = sqlx::query_scalar(
+            "SELECT EXISTS (SELECT 1 FROM pragma_table_info('submissions') WHERE name = 'rejected')",
+        )
+        .fetch_one(&mut *transaction)
+        .await?;
+        if !has_rejection {
+            sqlx::query(
+                "ALTER TABLE submissions ADD COLUMN rejected BOOLEAN NOT NULL DEFAULT FALSE \
+                 CHECK (rejected IN (0, 1) AND NOT (approved AND rejected))",
+            )
+            .execute(&mut *transaction)
+            .await?;
+        }
+        transaction.commit().await?;
         Ok(())
     })
 }

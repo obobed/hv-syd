@@ -31,7 +31,7 @@ pub struct Prize {
     pub stock: i64,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, sqlx::FromRow)]
 #[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 pub struct Submission {
     pub id: String,

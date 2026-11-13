@@ -14,6 +14,7 @@ mod attendee;
 mod login;
 mod milestone;
 mod prize;
+mod rollcall;
 mod submission;
 mod team;
 mod token;
@@ -83,10 +84,12 @@ pub fn all(
                 .or(asset::list())
                 .or(asset::get())
                 .or(submission::list(database_pool))
+                .or(submission::get(database_pool))
                 .or(submission::update(database_pool))
                 .or(attendee::create(database_pool))
                 .or(attendee::list(database_pool))
                 .or(attendee::update(database_pool))
+                .or(rollcall::list(database_pool))
                 .or(team::list(database_pool))
                 .or(team::update(database_pool))
                 .or(team::get(database_pool))
@@ -139,7 +142,9 @@ pub struct AdminApiDoc;
         milestone::set,
         prize::add,
         prize::update,
+        rollcall::list,
         submission::list,
+        submission::get,
         submission::update,
         team::list,
         team::get,
