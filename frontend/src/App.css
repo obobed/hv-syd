@@ -8,6 +8,11 @@
   background: url('./assets/haven/forest.webp') top center / cover no-repeat #62691e;
 }
 
+.haven-app-shell > .haven-scene::before,
+.haven-app-shell > .haven-scene::after {
+  content: none;
+}
+
 .haven-app-shell .haven-scene-mascot {
   left: 9%;
   transform: none;
