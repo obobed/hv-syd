@@ -4,12 +4,11 @@ import { useEffect, useState } from 'react'
 
 export default function Dashboard() {
     const [isAdmin, setIsAdmin] = useState(false)
-    const [hasTeam, setHasTeam] = useState(false) 
-    const [submissions, setSubmissions] = useState([])
-    const [tokenValid, setTokenValid] = useState([])
     const [error, setError] = useState('')
     const [tokens, setTokens] = useState({})
     const [ascending, setAscending] = useState(false)
+    const [tokenSeconds, setTokenSeconds] = useState(0)
+    const [tokenNanoseconds, setTokenNanoseconds] = useState(0)
 
     const tokenLevel = {
         ADMIN: 'admin',
@@ -93,12 +92,24 @@ export default function Dashboard() {
                             createToken('api/admin/token/create', 
                                 {
                                     level: tokenLevel.ADMIN,
-                                    valid_for: [100000, 1000]
+                                    valid_for: [Number(tokenSeconds), Number(tokenNanoseconds)]
                                 }
                             )
                         }>
                             Create Token
                         </button>
+                        <input
+                            type='number'
+                            placeholder='Seconds'
+                            value={tokenSeconds}
+                            onChange={(e) => setTokenSeconds(e.target.value)}
+                        />
+                        <input
+                            type='number'
+                            placeholder='Nanoseconds'
+                            value={tokenNanoseconds}
+                            onChange={(e) => setTokenNanoseconds(e.target.value)}
+                        />
                         <button command='close' commandfor='tokenCreator'>
                             X
                         </button>
