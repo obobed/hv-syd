@@ -24,9 +24,9 @@ export async function readSession(signal) {
         fetchSession('/api/admin/session', lookupSignal),
         fetchSession('/api/v1/session', lookupSignal),
     ])
-    if (staff.status === 'fulfilled' && staff.value) return { name: 'Staff' }
+    if (staff.status === 'fulfilled' && staff.value) return { name: 'Staff', role: 'staff' }
     if (attendee.status === 'fulfilled' && attendee.value) {
-        return { name: attendee.value.name.trim() || 'Attendee' }
+        return { name: attendee.value.name.trim() || 'Attendee', role: 'attendee' }
     }
     return null
 }

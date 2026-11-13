@@ -1,0 +1,402 @@
+.haven-team {
+    --team-avatar-size: 44px;
+    --team-avatar-overlap: 8px;
+    --team-card-art-width: calc(4 * var(--team-avatar-size) - 2 * var(--team-avatar-overlap));
+    --team-card-art-height: 52px;
+    --team-ink: #50260f;
+    --team-muted: #704425;
+    --team-accent: #a83b13;
+    --team-orange: #b83d0e;
+    --team-line: #e8cda6;
+    --team-display: 'Darumadrop One', 'Jua Extras', Jua, ui-rounded, system-ui, sans-serif;
+    min-height: calc(100svh - 70px);
+    padding: clamp(20px, 3vw, 36px) 16px;
+    background: var(--haven-forest-tint),
+        url('../assets/haven/forest.webp') top center / cover no-repeat #62691e;
+    color: var(--team-ink);
+    font: 18px/1.4 'Jua Extras', Jua, ui-rounded, system-ui, sans-serif;
+    letter-spacing: normal;
+}
+
+.haven-team,
+.haven-team * {
+    box-sizing: border-box;
+}
+
+.haven-team-shell {
+    width: min(100%, 960px);
+    margin-inline: auto;
+}
+
+.haven-team h2 {
+    margin: 0;
+    color: inherit;
+    font-family: var(--team-display);
+    font-weight: 400;
+    letter-spacing: -.025em;
+    font-size: clamp(2rem, 4vw, 2.65rem);
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+}
+
+.haven-team-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(14px, 2.4vw, 24px);
+    align-items: start;
+}
+
+.haven-team-card {
+    display: grid;
+    gap: 12px;
+    min-width: 0;
+    padding: clamp(18px, 3.5vw, 32px);
+    border: 1px solid var(--team-line);
+    border-radius: 20px;
+    corner-shape: squircle;
+    background: #fffaf0;
+    box-shadow: 0 4px 0 #ecd4a7;
+}
+
+.haven-team-setup {
+    grid-auto-rows: 1fr;
+    align-items: stretch;
+}
+
+.haven-team-setup .haven-team-card {
+    grid-template-rows: auto auto 1fr auto auto auto;
+    gap: 10px;
+    padding-block-start: clamp(12px, 1.7vw, 20px);
+}
+
+.haven-team-setup #team-otp-label,
+.haven-team-setup .haven-team-code {
+    justify-self: center;
+}
+
+.haven-team-setup #team-name {
+    min-height: 50px;
+}
+
+.haven-team-card p {
+    color: var(--team-muted);
+}
+
+.haven-team-avatars,
+.haven-team-campfire {
+    display: flex;
+    align-items: center;
+    width: var(--team-card-art-width);
+    height: var(--team-card-art-height);
+    margin-block-end: -10px;
+}
+
+.haven-team-avatars span,
+.haven-team-avatar {
+    display: grid;
+    place-items: end center;
+    width: var(--team-avatar-size);
+    height: var(--team-avatar-size);
+    overflow: hidden;
+    border: 2px solid #fffaf0;
+    border-radius: 50%;
+    background: #efae58;
+}
+
+.haven-team-avatars span + span {
+    margin-inline-start: calc(-1 * var(--team-avatar-overlap));
+}
+
+.haven-team-avatars span:nth-child(2),
+.haven-team-members li:nth-child(3n + 2) .haven-team-avatar {
+    background: #c5d477;
+}
+
+.haven-team-avatars span:nth-child(3),
+.haven-team-members li:nth-child(3n) .haven-team-avatar {
+    background: #ddbaeb;
+}
+
+.haven-team-avatars .haven-team-avatar-empty {
+    place-items: center;
+    margin-inline-start: 0;
+    border: 2px dotted #bc966e;
+    background: #fbf0dc;
+    color: var(--team-muted);
+}
+
+.haven-team-avatars img,
+.haven-team-avatar img {
+    display: block;
+    width: 100%;
+}
+
+.haven-team-campfire {
+    justify-content: center;
+    background: radial-gradient(ellipse, #ffdc93 0%, #ffe9b7 44%, transparent 74%);
+}
+
+.haven-team-campfire img {
+    display: block;
+    width: auto;
+    height: 100%;
+}
+
+.haven-team-loading {
+    justify-items: start;
+}
+
+.haven-team-card label {
+    margin-top: 6px;
+    margin-bottom: -6px;
+}
+
+.haven-team input,
+.haven-team button {
+    min-height: 44px;
+    border-radius: 12px;
+    corner-shape: squircle;
+    font: inherit;
+}
+
+.haven-team input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #bd9465;
+    background: #fff;
+    color: var(--team-ink);
+    font-size: 18px;
+}
+
+.haven-team input::placeholder {
+    color: #7d654d;
+}
+
+.haven-team input[aria-invalid='true'] {
+    border-color: var(--team-accent);
+}
+
+.haven-team-code {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    width: min(100%, 240px);
+}
+
+.haven-team-code input[type='text'] {
+    min-width: 0;
+    height: 50px;
+    padding: 0;
+    font: 24px var(--mono);
+    text-align: center;
+}
+
+.haven-team button {
+    padding: 7px 16px;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.haven-team button:disabled {
+    cursor: wait;
+    opacity: .65;
+}
+
+.haven-team :is(input, button):focus-visible {
+    outline: 2px solid var(--team-accent);
+    outline-offset: 3px;
+}
+
+.haven-team-primary {
+    background: var(--team-orange);
+    color: #fff;
+}
+
+.haven-team .haven-team-secondary {
+    border-color: var(--team-line);
+    background: #fff0cc;
+    color: var(--team-ink);
+    font-size: 16px;
+}
+
+@media (hover: hover) {
+    .haven-team-primary:hover:not(:disabled) {
+        background: #9b3410;
+    }
+
+    .haven-team-secondary:hover:not(:disabled) {
+        background: #ffe7ae;
+    }
+}
+
+.haven-team-card h3 {
+    margin: 0;
+    color: var(--team-muted);
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.haven-team-members {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-wrap: anywhere;
+}
+
+.haven-team-members li {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+}
+
+.haven-team-avatar {
+    width: 34px;
+    height: 34px;
+}
+
+.haven-team-members li + li {
+    margin-top: 6px;
+}
+
+.haven-team-name-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.haven-team-name-row h2 {
+    min-width: 0;
+}
+
+.haven-team .haven-team-disband {
+    display: grid;
+    flex: 0 0 44px;
+    place-items: center;
+    width: 44px;
+    padding: 0;
+    background: #f8ead6;
+    color: var(--team-accent);
+}
+
+@media (hover: hover) {
+    .haven-team .haven-team-disband:hover:not(:disabled) {
+        background: #f3ddbd;
+    }
+}
+
+.haven-team-dialog {
+    width: min(calc(100% - 32px), 440px);
+    padding: 24px;
+    border: 1px solid var(--team-line);
+    border-radius: 20px;
+    corner-shape: squircle;
+    background: #fffaf0;
+    color: var(--team-ink);
+}
+
+.haven-team-dialog::backdrop {
+    background: var(--haven-forest-tint);
+}
+
+.haven-team-dialog form {
+    display: grid;
+    gap: 12px;
+}
+
+.haven-team-dialog label {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.haven-team-dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.haven-team-roster {
+    width: min(100%, 468px);
+    margin-inline: auto;
+}
+
+.haven-team-invite {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px solid var(--team-line);
+}
+
+.haven-team-code-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    color: var(--team-muted);
+}
+
+.haven-team-code-status:empty {
+    display: none;
+}
+
+.haven-team-code-status code {
+    display: grid;
+    grid-template-columns: repeat(4, 40px);
+    gap: 6px;
+    padding: 0;
+    background: transparent;
+    color: var(--team-ink);
+    font-size: 22px;
+}
+
+.haven-team-code-status code span {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border: 1px solid #bd9465;
+    border-radius: 8px;
+    corner-shape: squircle;
+    background: #fff;
+}
+
+.haven-team .haven-team-redo {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    padding: 0;
+}
+
+.haven-team-invite > .haven-team-error {
+    flex-basis: 100%;
+    text-align: center;
+}
+
+.haven-team-card .haven-team-error {
+    color: var(--team-accent);
+}
+
+@media (max-width: 660px) {
+    .haven-team-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .haven-team-setup {
+        row-gap: 14px;
+    }
+
+    /* Whole CSS pixels keep the stacked cards from rounding to different heights. */
+    .haven-team-setup .haven-team-card {
+        padding-block: 12px 18px;
+        line-height: 25px;
+    }
+
+    .haven-team-setup h2 {
+        line-height: 34px;
+    }
+}

@@ -6,7 +6,7 @@
     min-height: 70px;
     padding: 5px clamp(16px, 4vw, 56px);
     background:
-        linear-gradient(90deg, #743114ed, #713018bb),
+        var(--haven-forest-tint),
         url('../assets/haven/forest.webp') center 26% / cover no-repeat #843b19;
     color: #fff7e8;
     font: 17px/1.2 'Jua Extras', Jua, ui-rounded, system-ui, sans-serif;

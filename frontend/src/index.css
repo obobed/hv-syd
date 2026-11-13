@@ -1,4 +1,5 @@
 :root {
+  --haven-forest-tint: linear-gradient(90deg, #743114ed, #713018bb);
   --text: #000000;
   --text-h: #08060d;
   --bg: #fff;
@@ -97,6 +98,7 @@ code,
   font-family: var(--mono);
   display: inline-flex;
   border-radius: 4px;
+  corner-shape: squircle;
   color: var(--text-h);
 }
 
