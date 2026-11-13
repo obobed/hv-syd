@@ -29,9 +29,35 @@ export default function Login() {
         setAttendID(QRID)
         console.log({attendID});
 
-        // Send ID to API and return login result. Set isLoggedIn to true if successful
+        attendeeLogin('/api/v1/login', {
+          id: QRID
+        })
     });
     };
+
+    async function attendeeLogin(url = '', payload = {}) {
+      try {
+        const response = await fetch (url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: 'include',
+          body: JSON.stringify(payload)
+        })
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`)
+        }
+
+        setIsAdmin(false)
+        setIsLoggedIn(true)
+
+      } catch {
+          console.error('Fetch failed:', error.message)
+          setIsLoggedIn(false)
+      }
+    }
 
     async function adminLogin(url = '', payload = {}) {
       console.log({username, password, adminToken})
@@ -50,8 +76,8 @@ export default function Login() {
             throw new Error(`HTTP error! Status: ${response.status}`)
         }
         
-        console.log("Login successful! The admin-token cookie is now set.")
-        console.log(response)
+        //console.log("Login successful! The admin-token cookie is now set.")
+        //console.log(response)
         setIsAdmin(true)
         setIsLoggedIn(true)
       } catch (error) {
