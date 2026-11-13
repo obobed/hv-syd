@@ -66,7 +66,7 @@ export default function Dashboard() {
                             }
                         )
                     }>
-                        explode
+                        Create Token
                     </button>
                 </div>
             </>
