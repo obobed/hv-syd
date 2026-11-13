@@ -44,7 +44,7 @@ pub fn all(
     state: &State,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     let State {
-        config,
+        config: _,
         database_pool,
         token_env: _,
         tokens: _,

@@ -251,7 +251,7 @@ impl From<io::Error> for Error {
 }
 
 impl<T> From<std::sync::PoisonError<T>> for Error {
-    fn from(value: std::sync::PoisonError<T>) -> Self {
+    fn from(_: std::sync::PoisonError<T>) -> Self {
         #[cfg(not(debug_assertions))]
         {
             Error::InternalServerError
