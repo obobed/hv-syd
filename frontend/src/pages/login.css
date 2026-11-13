@@ -1,0 +1,427 @@
+@font-face {
+    font-family: 'Darumadrop One';
+    src: url('../assets/haven/darumadrop-one.woff2') format('woff2');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: Jua;
+    src: url('../assets/haven/jua.woff2') format('woff2');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Jua Extras';
+    src: url('../assets/haven/jua-extras.woff2') format('woff2');
+    font-display: swap;
+    unicode-range:
+        U+60, U+A1-AC, U+AE-17E, U+18F, U+192, U+1CD-1CE, U+1D4, U+218-21B, U+237,
+        U+259, U+2C6-2CC, U+2D8-2DD, U+1E9E, U+1EA0-1EF9, U+2010, U+2012-2015,
+        U+2018-201A, U+201C-201E, U+2020-2022, U+2026, U+2030, U+2032-2033,
+        U+2039-203A, U+2044, U+20AC, U+20B9, U+2122, U+2212, U+2248, U+2260,
+        U+2264-2265;
+}
+
+.haven-login {
+    /* Haven's app.css theme, scoped to the login route. */
+    --display: 'Darumadrop One', 'Jua Extras', Jua, ui-rounded, system-ui, sans-serif;
+    --body: 'Jua Extras', Jua, ui-rounded, system-ui, sans-serif;
+    --green: #b8c220;
+    --orange: #ed5615;
+    --yellow: #ffd059;
+    --butter: #ffe382;
+    --ink: #50260f;
+    --muted: #704425;
+    --accent-ink: #9b3410;
+    --frame-offset: clamp(8px, 1.1vw, 16px);
+    --frame-gap: clamp(12px, 1.1vw, 16px);
+    --frame-weight: clamp(3px, .35vw, 5px);
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    min-height: 100svh;
+    padding: clamp(42px, 7vw, 110px);
+    overflow: clip;
+    background: var(--green) url('../assets/haven/forest.webp') top center / cover no-repeat;
+    color: var(--ink);
+    font: 18px/1.3 var(--body);
+    letter-spacing: -.015em;
+}
+
+.haven-login,
+.haven-login * {
+    box-sizing: border-box;
+}
+
+/* The open-corner rule frame from Haven's app.css. */
+.haven-login::before,
+.haven-login::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(var(--yellow), var(--yellow)), linear-gradient(var(--yellow), var(--yellow));
+}
+
+.haven-login::before {
+    inset: var(--frame-offset) calc(var(--frame-offset) + var(--frame-gap));
+    background-size: 100% var(--frame-weight);
+    background-position: left top, left bottom;
+}
+
+.haven-login::after {
+    inset: calc(var(--frame-offset) + var(--frame-gap)) var(--frame-offset);
+    background-size: var(--frame-weight) 100%;
+    background-position: left top, right top;
+}
+
+.haven-login-shell {
+    display: grid;
+    grid-template-columns: 1fr minmax(320px, 440px);
+    align-items: center;
+    gap: clamp(32px, 6vw, 94px);
+    width: min(100%, 1050px);
+}
+
+.haven-hero-brand {
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    color: #fff;
+}
+
+.haven-hero-brand img {
+    display: block;
+    width: 135%;
+    height: auto;
+    filter: drop-shadow(0 0 5px #ae3e0755);
+}
+
+.haven-hero-brand span {
+    font: clamp(2.55rem, 5.1vw, 5rem)/.82 var(--display);
+    letter-spacing: -.05em;
+    margin-left: 14%;
+    text-shadow: 0 0 5px #ae3e0780;
+}
+
+.haven-hero-mascot,
+.haven-hero-foreground {
+    position: absolute;
+    pointer-events: none;
+    user-select: none;
+    height: auto;
+}
+
+.haven-hero-mascot {
+    right: 9.6%;
+    bottom: 0;
+    width: clamp(105px, 14vw, 224px);
+    transform: scaleX(-1);
+}
+
+.haven-hero-foreground {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    transform: translateY(55%);
+}
+
+.haven-login-panel {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    min-width: 0;
+    padding: clamp(22px, 3vw, 40px);
+    /* The city hero's translucent panel, with enough opacity for form text. */
+    background: rgb(255 255 255 / .89);
+    border-radius: 1.2rem;
+    corner-shape: squircle;
+    text-align: center;
+}
+
+.haven-login-heading {
+    margin-bottom: 22px;
+}
+
+.haven-login h1 {
+    margin: 0 0 9px;
+    color: var(--accent-ink);
+    font: 400 clamp(2.1rem, 3.8vw, 3.35rem)/.95 var(--display);
+    letter-spacing: -.05em;
+    text-wrap: balance;
+}
+
+.haven-login-heading p {
+    color: var(--muted);
+    text-wrap: balance;
+}
+
+.haven-login button,
+.haven-login input,
+.haven-login select {
+    font: inherit;
+    letter-spacing: inherit;
+}
+
+.haven-login button {
+    cursor: pointer;
+}
+
+.haven-login button:disabled {
+    cursor: wait;
+    opacity: .65;
+}
+
+.haven-login .haven-primary,
+.haven-login .haven-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+}
+
+/* Adapted from SignupForm.svelte's rounded orange action. */
+.haven-login .haven-primary {
+    width: 100%;
+    padding: .5rem 1rem;
+    border: 0;
+    border-radius: clamp(.75rem, 2.5vw, 1.25rem);
+    corner-shape: squircle;
+    background: var(--orange);
+    color: #fff;
+    font-size: 24px;
+    line-height: 1.15;
+}
+
+.haven-link {
+    padding: 0 4px;
+    border: 0;
+    border-radius: 5px;
+    background: none;
+    color: var(--accent-ink);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .haven-primary:not(:disabled):hover {
+        background: #ca410d;
+    }
+
+    .haven-link:not(:disabled):hover {
+        text-decoration-color: currentColor;
+    }
+}
+
+.haven-login :is(button, input, select):focus-visible {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 3px;
+}
+
+.haven-alternate {
+    margin-top: 8px;
+}
+
+.haven-login-footer {
+    width: 100%;
+    margin-top: 4px;
+    border-top: 1px solid #e2cdb2;
+}
+
+.haven-login-footer .haven-link {
+    color: var(--muted);
+    font-size: 16px;
+}
+
+.haven-login-form {
+    display: grid;
+    gap: 12px;
+    width: 100%;
+    text-align: start;
+}
+
+.haven-id-form {
+    gap: 6px;
+    margin-block: 16px 10px;
+}
+
+.haven-id-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+}
+
+.haven-login .haven-id-row .haven-primary {
+    min-width: 88px;
+    padding-inline: clamp(9px, 2.6vw, 16px);
+    font-size: 19px;
+    white-space: nowrap;
+}
+
+.haven-field {
+    display: grid;
+    gap: 4px;
+}
+
+.haven-input {
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    padding: 8px 12px;
+    border: 1px solid #deba96;
+    border-radius: 12px;
+    corner-shape: squircle;
+    background: rgb(255 255 255 / .7);
+    color: var(--ink);
+}
+
+.haven-input::placeholder {
+    color: var(--muted);
+}
+
+.haven-camera {
+    position: relative;
+    width: 100%;
+    height: clamp(184px, 24svh, 210px);
+    border-radius: 1.2rem;
+    corner-shape: squircle;
+    overflow: hidden;
+    background: #fff7e9;
+    border: 1px solid #efd5b8;
+}
+
+.haven-camera-idle,
+.haven-camera-live {
+    position: absolute;
+    inset: 0;
+}
+
+.haven-camera-idle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px;
+    color: var(--accent-ink);
+}
+
+.haven-camera-idle p {
+    font-size: 15px;
+    text-wrap: balance;
+}
+
+.haven-login .haven-camera-idle .haven-primary {
+    width: auto;
+    font-size: 20px;
+}
+
+.haven-camera-live {
+    background: #29211e;
+}
+
+.haven-camera-guide {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    filter: drop-shadow(0 1px 5px #000a);
+    pointer-events: none;
+}
+
+.haven-camera-guide svg {
+    width: min(132px, 50%);
+    height: auto;
+}
+
+.haven-camera-guide svg path {
+    stroke-width: .55;
+}
+
+.haven-camera-controls {
+    position: absolute;
+    inset: auto 8px 8px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.haven-login .haven-camera-controls :is(button, select) {
+    min-width: 0;
+    min-height: 40px;
+    padding: 0 8px;
+    border: 0;
+    border-radius: 10px;
+    corner-shape: squircle;
+    background: #30231e;
+    color: #fff;
+    font-size: 14px;
+}
+
+.haven-login .haven-camera-controls :focus-visible {
+    outline-color: #ffe382;
+}
+
+.haven-login-error {
+    width: 100%;
+    margin: 2px 0 10px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    corner-shape: squircle;
+    background: #ffebe4;
+    color: #8d2615;
+    font-size: 16px;
+    text-wrap: pretty;
+}
+
+.haven-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+    .haven-login {
+        padding: 40px 28px 76px;
+    }
+
+    .haven-login-shell {
+        grid-template-columns: 1fr;
+        gap: 26px;
+        width: min(100%, 420px);
+    }
+
+    .haven-hero-brand {
+        width: min(79%, 270px);
+        justify-self: center;
+    }
+
+    .haven-hero-brand span {
+        font-size: clamp(1.65rem, 7vw, 2.75rem);
+    }
+
+    .haven-hero-mascot {
+        right: 7%;
+        width: 96px;
+    }
+
+    .haven-hero-foreground {
+        min-width: 550px;
+        left: 50%;
+        transform: translate(-50%, 55%);
+    }
+
+    .haven-login-heading {
+        margin-bottom: 16px;
+    }
+}

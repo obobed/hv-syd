@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router'
 import { useEffect, useState } from 'react'
 import { Scanner, useDevices } from '@yudiel/react-qr-scanner';
 import Cookies from 'js-cookie';
+import './misc.css'
 
 export default function Rollcall() {
     const devices = useDevices();

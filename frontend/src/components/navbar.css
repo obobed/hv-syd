@@ -1,29 +1,120 @@
 .navbg {
-    display :flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    background: #f7971d;
-    border-bottom: 1px solid #f7971d;
-}
-
-.navlink {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: flex-end;
+    gap: 8px clamp(16px, 3vw, 36px);
+    min-height: 70px;
+    padding: 5px clamp(16px, 4vw, 56px);
+    background:
+        linear-gradient(90deg, #743114ed, #713018bb),
+        url('../assets/haven/forest.webp') center 26% / cover no-repeat #843b19;
+    color: #fff7e8;
+    font: 17px/1.2 'Jua Extras', Jua, ui-rounded, system-ui, sans-serif;
+}
+
+.haven-nav-brand {
+    display: flex;
+    align-items: center;
+}
+
+.navbg .logo {
+    display: block;
+    width: 60px;
+    height: 60px;
+}
+
+.haven-nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px clamp(12px, 2vw, 24px);
+}
+
+.haven-nav-links a {
+    padding: 8px 0;
+    color: inherit;
+    text-decoration: none;
+}
+
+.haven-nav-links a:hover,
+.haven-nav-links a[aria-current='page'] {
+    color: #ffe382;
+}
+
+.haven-nav-account {
+    display: flex;
+    align-items: center;
     gap: 10px;
+    min-width: 0;
     margin-left: auto;
-    color: #f6c533;
 }
 
-.logo {
-    display: flex;
-    flex-wrap: wrap;
+.haven-nav-avatar {
+    display: grid;
+    flex: 0 0 34px;
+    place-items: end center;
+    width: 34px;
+    height: 34px;
+    overflow: hidden;
+    border: 2px solid #ffd059;
+    border-radius: 50%;
+    background: #ee891d;
+}
+
+.haven-nav-avatar img {
+    display: block;
+    width: 33px;
+}
+
+.haven-nav-name {
+    max-width: min(20vw, 180px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.haven-nav-action {
+    display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
-    justify-content: flex-end;
-    gap: 5px;
-    margin-right: auto;
-    width: 80px;
-    height: auto;
+    justify-content: center;
+    gap: 7px;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid #ffedcc33;
+    border-radius: 15px;
+    corner-shape: squircle;
+    background: #4c291a;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    text-decoration: none;
+}
+
+.haven-nav-action:hover {
+    background: #392015;
+}
+
+.haven-nav-signin {
+    margin-left: auto;
+}
+
+.navbg :is(a, button):focus-visible {
+    outline: 2px solid #ffe382;
+    outline-offset: 3px;
+}
+
+@media (max-width: 530px) {
+    .navbg {
+        padding-bottom: 8px;
+    }
+
+    .haven-nav-links {
+        order: 1;
+        flex-basis: 100%;
+    }
+
+    .haven-nav-name {
+        max-width: 27vw;
+    }
 }
