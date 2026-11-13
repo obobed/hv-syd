@@ -10,6 +10,9 @@ export default function Dashboard() {
     const [tokenSeconds, setTokenSeconds] = useState(0)
     const [tokenNanoseconds, setTokenNanoseconds] = useState(0)
     const [targetToken, setTargetToken] = useState('')
+    const [teamName, setTeamName] = useState('')
+    const [hasTeam, setHasTeam] = useState(false)
+    const [teamInfo, setTeamInfo] = useState({})
 
     const tokenLevel = {
         ADMIN: 'admin',
@@ -25,6 +28,52 @@ export default function Dashboard() {
             // list of all submissions (for a specific team)
         }
     }, [])
+
+
+    async function teamCheck(url = '') {
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                credentials: 'include'
+            })
+
+            if (!response.ok) {
+                if (response.status == 404) {
+                    setHasTeam(false)
+                    return
+                }
+                throw new Error(`HTTP error: ${response.status}`);
+            }
+
+            setHasTeam(true)
+            const rawTeamInfo = await response.JSON()
+            setTeamInfo(rawTeamInfo)
+
+        } catch {
+            console.error(error);
+        }
+    }
+
+    async function createTeam(url = '', payload = {}) {
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify(payload)
+            })
+            if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
+            }
+
+            setHasTeam(true)
+
+        } catch {
+            console.error(error);
+        }
+    }
 
     async function createToken(url = '', payload = {}) {
         console.log(url, payload)
@@ -44,8 +93,8 @@ export default function Dashboard() {
             }
 
             const token = await response.text()
-            console.log("token")
-            console.log(token)
+            // console.log("token")
+            // console.log(token)
             getTokens('/api/admin/token/list')
 
         } catch {

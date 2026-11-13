@@ -8,8 +8,8 @@ export default function Rollcall() {
     const [isPaused, setIsPaused] = useState(false);
     const [attendID, setAttendID] = useState('')
     const [scanContext, setScanContext] = useState(0)
-    const [attendeeData, setAttendeeData] = useState([])
-    const [teamData, setTeamData] = useState([])
+    const [attendeeData, setAttendeeData] = useState({})
+    const [teamData, setTeamData] = useState({})
     const [viewAttendees, setViewAttendees] = useState(true)
 
 
