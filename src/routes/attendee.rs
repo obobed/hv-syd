@@ -7,6 +7,7 @@ use crate::{Error, state::State};
 
 mod login;
 mod milestones;
+mod submission;
 mod team;
 
 /// Authentication filter
@@ -57,7 +58,10 @@ pub fn all(
                 .or(team::create(database_pool))
                 .or(team::get(database_pool))
                 .or(team::otp(database_pool, otps))
-                .or(team::join(database_pool, otps)),
+                .or(team::join(database_pool, otps))
+                .or(submission::create(database_pool))
+                .or(submission::delete(database_pool))
+                .or(submission::list(database_pool)),
         )),
     )
 }
