@@ -66,30 +66,24 @@ struct Attendee {
 pub fn get(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-    warp::path!("team" / "get" / String)
+    warp::path!("team" / "get")
         .and(warp::get())
         .and(warp::cookie("attendee-id"))
-        .map(|id, team_name| (db.clone(), team_name, id))
+        .map(|id| (db.clone(), id))
         .untuple_one()
-        .then(
-            async |db, team_name: String, attendee_id| -> Result<_, Error> {
-                let team = query_file_as!(TeamDetails, "sql/team-details.sql", &team_name)
-                    .fetch_one(&db)
-                    .await?;
+        .then(async |db, attendee_id: String| -> Result<_, Error> {
+            let team = query_file!("sql/get-team-name.sql", &attendee_id)
+                .fetch_one(&db)
+                .await?;
 
-                if !team
-                    .attendees
-                    .as_ref()
-                    .ok_or(Error::InternalServerError)?
-                    .iter()
-                    .any(|attendee| attendee.id == attendee_id)
-                {
-                    return Err(Error::Unauthorized);
-                };
+            let team_name = team.name.ok_or(Error::NotFound)?;
 
-                Ok(warp::reply::json(&team))
-            },
-        )
+            let team = query_file_as!(TeamDetails, "sql/team-details.sql", &team_name)
+                .fetch_one(&db)
+                .await?;
+
+            Ok(warp::reply::json(&team))
+        })
 }
 
 #[inline]
