@@ -22,13 +22,15 @@ pub fn upload(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     warp::path!("upload")
-        .and(warp::put())
+        .and(warp::post())
         .and(warp::cookie("attendee-id"))
         .and(warp::body::json()) // <- `crate::routes::json_body` has a 64KiB limit
         .map(|id, body| (db.clone(), id, body))
         .untuple_one()
         .then(
             async |db, id: String, body: UploadBody| -> Result<_, Error> {
+                trace!("create private asset (POST /api/v1/upload)");
+
                 let team = query_file!("sql/get-team-name.sql", &id)
                     .fetch_one(&db)
                     .await?;
@@ -48,7 +50,9 @@ pub fn upload(
 
                 path_on_disk.push(&relative_path);
 
-                trace!("create private asset (POST /api/v1/upload)");
+                if path_on_disk.exists() {
+                    return Err(Error::Conflict);
+                }
 
                 // NOTE: Keep this sync! This makes sure the file can actually be created ;-;
                 fs::create_dir_all(path_on_disk.parent().ok_or(Error::NotFound)?)?;
