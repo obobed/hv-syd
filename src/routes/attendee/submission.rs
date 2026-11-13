@@ -15,6 +15,17 @@ struct CreateSubmissionBody {
     attachment: Option<String>,
 }
 
+/// Create submission for the attendee's team.
+#[cfg_attr(feature = "openapi", utoipa::path(
+    post,
+    path = "/submission/create",
+    request_body = CreateSubmissionBody,
+    responses(
+        (status = 200, body = Uuid, description = "Successfully created submission, returns submission id."),
+        (status = 404, description = "Attendee didn't have a team"),
+        (status = 500, description = "An internal database or IO error occured.")
+    ),
+))]
 pub fn create(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
@@ -48,7 +59,7 @@ pub fn create(
                 .execute(&db)
                 .await?;
 
-                return Ok(warp::reply::reply());
+                return Ok(sub_id);
             },
         )
 }
@@ -56,9 +67,23 @@ pub fn create(
 #[derive(Debug, Serialize, Deserialize)]
 #[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 struct DeleteSubmissionBody {
+    /// Submission ID
+    #[cfg_attr(feature = "openapi", schema(value_type = Uuid))]
     id: String,
 }
 
+/// Delete a submission.
+#[cfg_attr(feature = "openapi", utoipa::path(
+    put,
+    path = "/submission/delete",
+    request_body = CreateSubmissionBody,
+    responses(
+        (status = 200, description = "Successfully deleted submission."),
+        (status = 403, description = "Submission wasn't owned by attendee's team."),
+        (status = 404, description = "Attendee didn't have a team"),
+        (status = 500, description = "An internal database or IO error occured.")
+    ),
+))]
 pub fn delete(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
@@ -94,6 +119,18 @@ pub fn delete(
         )
 }
 
+/// Get milestones
+///
+/// Get milestones
+#[cfg_attr(feature = "openapi", utoipa::path(
+    get,
+    path = "/submission/list",
+    responses(
+        (status = 200, body = Vec<Submission>, description = "Successfully listed submissions."),
+        (status = 404, description = "Attendee didn't have a team"),
+        (status = 500, description = "An internal database or IO error occured.")
+    ),
+))]
 pub fn list(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {

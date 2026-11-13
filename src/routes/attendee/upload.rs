@@ -18,6 +18,22 @@ struct UploadBody {
     filename: String,
 }
 
+/// Create a public asset
+///
+/// Accepts file content and writes it to a file on disk. Directories are not
+/// supported.
+#[cfg_attr(feature = "openapi", utoipa::path(
+    post,
+    path = "/upload",
+    request_body = UploadBody,
+    responses(
+        (status = 200, body = String, description = "Asset was created, returns path to asset (relative to host)"),
+        (status = 400, description = "The given path was a directory (ends in `/`)."),
+        (status = 404, description = "Attendee didn't have a team."),
+        (status = 408, description = "Asset with same name already exists."),
+        (status = 500, description = "An internal IO error occured.")
+    ),
+))]
 pub fn upload(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {

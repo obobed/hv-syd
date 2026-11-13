@@ -11,11 +11,24 @@ struct Milestone {
     pub id: i64,
     pub name: String,
     pub description: String,
+    #[cfg_attr(feature = "openapi", schema(value_type = Vec<String>))]
     pub requirements: Option<Json<Vec<String>>>,
+    #[cfg_attr(feature = "openapi", schema(value_type = Vec<String>))]
     pub prizes: Json<Vec<String>>,
     pub optional: bool,
 }
 
+/// Get milestones
+///
+/// Get milestones
+#[cfg_attr(feature = "openapi", utoipa::path(
+    get,
+    path = "/milestones",
+    responses(
+        (status = 200, body = Vec<Milestone>, description = "Success."),
+        (status = 500, description = "An internal database or IO error occured.")
+    ),
+))]
 pub fn get(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {

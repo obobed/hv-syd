@@ -67,3 +67,64 @@ pub fn all(
         )),
     )
 }
+
+#[cfg(feature = "openapi")]
+#[derive(utoipa::OpenApi)]
+#[openapi(
+    info(
+        title = "Satellites' Platform Documentation",
+        description = dedent::dedent!("
+        Welcome to the platform documentation.
+
+        Every endpoint listed here requires authentication, except for `/login`.
+        Use the attend participant id in `/login`, then you should be able
+        to use any of these endpoints with the cookie that is set.
+
+        Note that error response variants documented are not exhaustive"),
+        contact(name = "valerie"),
+        license(name = "AGPL-3.0-or-later", identifier = "AGPL-3.0-or-later")
+    ),
+    nest((path = "/api/v1", api = AttendeeApiDocInner))
+)]
+/// API Documentation for admin paths.
+pub struct AttendeeApiDoc;
+
+#[cfg(feature = "openapi")]
+#[derive(utoipa::OpenApi)]
+#[openapi(
+    paths(
+        login::login,
+        milestones::get,
+        team::create,
+        team::get,
+        team::otp,
+        team::join,
+        submission::list,
+        submission::create,
+        submission::delete,
+        upload::upload
+    ),
+    security(("attendee-id" = ["read:attendee", "write:attendee"])),
+    modifiers(&SecurityDetails)
+)]
+/// This just holds all the paths so I can easily prefix them using `nest(...)`
+struct AttendeeApiDocInner;
+
+#[cfg(feature = "openapi")]
+struct SecurityDetails;
+
+#[cfg(feature = "openapi")]
+impl utoipa::Modify for SecurityDetails {
+    fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+        if let Some(components) = openapi.components.as_mut() {
+            use utoipa::openapi::security::{ApiKey, ApiKeyValue, SecurityScheme};
+
+            components.add_security_scheme(
+                "attendee-id",
+                SecurityScheme::ApiKey(ApiKey::Cookie(ApiKeyValue::new("attendee-id"))),
+            );
+        } else {
+            panic!("Failed to add api-key details: unable to get openapi components");
+        }
+    }
+}

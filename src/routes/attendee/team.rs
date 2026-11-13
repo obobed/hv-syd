@@ -6,11 +6,21 @@ use warp::Filter;
 use crate::{Error, routes::json_body, state::OtpMap};
 
 #[derive(Debug, Serialize, Deserialize)]
+#[cfg_attr(feature = "openapi", derive(utoipa::ToSchema))]
 #[serde(rename_all = "camelCase")]
 struct TeamCreateBody {
     team_name: String,
 }
-
+/// Create team
+#[cfg_attr(feature = "openapi", utoipa::path(
+    post,
+    path = "/team/create",
+    request_body = TeamCreateBody,
+    responses(
+        (status = 200, description = "Success."),
+        (status = 500, description = "An internal database or IO error occured.")
+    ),
+))]
 pub fn create(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
@@ -63,6 +73,16 @@ struct Attendee {
     last_name: String,
 }
 
+/// Get attendee's team details
+#[cfg_attr(feature = "openapi", utoipa::path(
+    get,
+    path = "/team/get",
+    responses(
+        (status = 200, body = TeamDetails, description = "Success."),
+        (status = 404, description = "Attendee didn't have a team"),
+        (status = 500, description = "An internal database or IO error occured.")
+    ),
+))]
 pub fn get(
     db: &Pool<Sqlite>,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
@@ -91,6 +111,16 @@ fn new_otp() -> String {
     return rand::distr::Alphanumeric.sample_string(&mut rand::rng(), 4);
 }
 
+/// Get attendee's team details
+#[cfg_attr(feature = "openapi", utoipa::path(
+    post,
+    path = "/team/otp",
+    responses(
+        (status = 200, body = String, description = "Success. Returns a 4-character OTP"),
+        (status = 404, description = "Attendee didn't have a team"),
+        (status = 500, description = "An internal database or IO error occured.")
+    ),
+))]
 pub fn otp(
     db: &Pool<Sqlite>,
     otps: &OtpMap,
@@ -121,6 +151,19 @@ struct JoinBody {
     otp: String,
 }
 
+/// Get attendee's team details
+#[cfg_attr(feature = "openapi", utoipa::path(
+    post,
+    path = "/team/join",
+    request_body = JoinBody,
+    responses(
+        (status = 200, description = "Success."),
+        (status = 400, description = "Team has maximum members"),
+        (status = 404, description = "Invalid OTP"),
+        (status = 409, description = "Attendee already had a team"),
+        (status = 500, description = "An internal database or IO error occured.")
+    ),
+))]
 pub fn join(
     db: &Pool<Sqlite>,
     otps: &OtpMap,

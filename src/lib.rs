@@ -15,6 +15,8 @@ pub use error::Error;
 
 #[cfg(feature = "openapi")]
 pub use routes::admin::AdminApiDoc;
+#[cfg(feature = "openapi")]
+pub use routes::attendee::AttendeeApiDoc;
 
 pub const PUBLIC_ASSET_FOLDER: &str = "assets";
 pub const PRIVATE_ASSET_FOLDER: &str = "private";
