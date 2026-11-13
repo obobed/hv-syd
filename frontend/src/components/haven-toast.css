@@ -1,0 +1,92 @@
+.haven-toast-region {
+    position: fixed;
+    z-index: 100;
+    inset: auto max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) auto;
+    width: min(385px, calc(100vw - 40px));
+    pointer-events: none;
+}
+
+.haven-toast {
+    --mark-bg: #ffe39c;
+    --mark-ink: #754411;
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    padding: 17px 94px 17px 16px;
+    min-height: 70px;
+    overflow: hidden;
+    border: 1px solid #e8bc76;
+    border-radius: 22px;
+    corner-shape: squircle;
+    background: #fff7e6;
+    box-shadow: 0 8px 28px #50260f3d;
+    color: #704425;
+    font: 16px/1.25 'Jua Extras', Jua, system-ui, sans-serif;
+    pointer-events: auto;
+}
+
+.haven-toast[data-tone='success'] {
+    --mark-bg: #e3ec9f;
+    --mark-ink: #4d5818;
+}
+
+.haven-toast[data-tone='error'] {
+    --mark-bg: #f9d0bb;
+    --mark-ink: #9b3410;
+}
+
+.haven-toast-mark {
+    display: grid;
+    place-items: center;
+    height: 34px;
+    border-radius: 11px;
+    corner-shape: squircle;
+    background: var(--mark-bg);
+    color: var(--mark-ink);
+    font: 700 19px/1 system-ui, sans-serif;
+}
+
+.haven-toast-copy {
+    overflow-wrap: anywhere;
+}
+
+.haven-toast-title {
+    margin-bottom: 4px;
+    color: #50260f;
+    font: 22px/1 'Darumadrop One', 'Jua Extras', Jua, sans-serif;
+}
+
+.haven-toast-mascot {
+    position: absolute;
+    z-index: -1;
+    right: 4px;
+    bottom: -8px;
+    width: 79px;
+    rotate: -8deg;
+    pointer-events: none;
+}
+
+.haven-toast-close {
+    position: absolute;
+    inset: 3px 4px auto auto;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: #704425;
+    font: 24px/1 system-ui, sans-serif;
+    cursor: pointer;
+}
+
+.haven-toast-close:hover {
+    background: #ffe5b8;
+}
+
+.haven-toast-close:focus-visible {
+    outline: 2px solid #9b3410;
+    outline-offset: 2px;
+}
