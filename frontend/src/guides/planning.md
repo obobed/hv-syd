@@ -11,7 +11,7 @@ Show all milestones, prizes + stock,
 
 Admin:
 - Dashboard: submissions get, notifications get, token get/post
-List of submissions needing review, ability to extend token duration
+List of submissions needing review,
 - Milestones: milestone post, asset post
 List of current milestones + prizes, ability to edit
 - Submissions: submission get, submission(id) get, submission(id) post, asset

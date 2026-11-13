@@ -9,6 +9,7 @@ export default function Dashboard() {
     const [ascending, setAscending] = useState(false)
     const [tokenSeconds, setTokenSeconds] = useState(0)
     const [tokenNanoseconds, setTokenNanoseconds] = useState(0)
+    const [targetToken, setTargetToken] = useState('')
 
     const tokenLevel = {
         ADMIN: 'admin',
@@ -75,6 +76,28 @@ export default function Dashboard() {
         }
     }
 
+    async function tokenUpdate(url = '', payload = {}) {
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(payload)
+            })
+
+            if (!response.ok) {
+                throw new Error (`HTTP error! Status: ${response.status}`)
+            }
+
+            getTokens('api/admin/token/list')
+
+        } catch {
+            console.log('error')
+        }
+    }
+
     return(
         <>
         <button onClick={() => setIsAdmin(!isAdmin)}>
@@ -118,12 +141,14 @@ export default function Dashboard() {
                     <button command='show-modal' commandfor='tokenCreator'>
                         Create New Token
                     </button>
+
                     <button onClick={() =>
                         getTokens('/api/admin/token/list')
                     }
                     >
                         Refresh Tokens
                     </button>
+
                     <button onClick={() => setAscending(!ascending)}>
                         {ascending ? 'Expires First' : 'Expires Last'}
                     </button>
@@ -145,10 +170,38 @@ export default function Dashboard() {
                                 <tr key={tokenId}>
                                     <td><code>{tokenId}</code></td>
                                     <td>{new Date(metadata.exp).toLocaleString()}</td>
+                                    <button onClick={() => setTargetToken(tokenId)} command='show-modal' commandfor='tokenUpdator'> Edit </button>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+
+                    <dialog id='tokenUpdator'>
+                        <p> Updating token {targetToken}</p>
+
+                        <button onClick={() => tokenUpdate(`/api/admin/token/${targetToken}`, {
+                            add: [Number(tokenSeconds), Number(tokenNanoseconds)]
+                        })
+                        } command='close' commandfor='tokenUpdator'>
+                            Extend Token
+                        </button>
+
+                        <input
+                            type='number'
+                            placeholder='Seconds'
+                            value={tokenSeconds}
+                            onChange={(e) => setTokenSeconds(e.target.value)}
+                        />
+                        <input
+                            type='number'
+                            placeholder='Nanoseconds'
+                            value={tokenNanoseconds}
+                            onChange={(e) => setTokenNanoseconds(e.target.value)}
+                        />
+                        <button command='close' commandfor='tokenUpdator'>
+                            X
+                        </button>
+                    </dialog>
                 </div>
             </>
         )}
