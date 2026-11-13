@@ -31,10 +31,10 @@ function WithNavbar() {
   }, [key])
 
   return (
-    <>
+    <div className="haven-app-shell">
       <Navbar session={session} />
       <Outlet context={session} />
-    </>
+    </div>
   )
 }
 

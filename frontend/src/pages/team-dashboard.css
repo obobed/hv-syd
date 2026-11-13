@@ -9,7 +9,7 @@
     --team-orange: #b83d0e;
     --team-line: #e8cda6;
     --team-display: 'Darumadrop One', 'Jua Extras', Jua, ui-rounded, system-ui, sans-serif;
-    min-height: calc(100svh - 70px);
+    flex: 1;
     padding: clamp(20px, 3vw, 36px) 16px;
     background: var(--haven-forest-tint),
         url('../assets/haven/forest.webp') top center / cover no-repeat #62691e;
