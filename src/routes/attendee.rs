@@ -9,6 +9,7 @@ mod login;
 mod milestones;
 mod submission;
 mod team;
+mod upload;
 
 /// Authentication filter
 fn with_attendee_auth(
@@ -61,7 +62,8 @@ pub fn all(
                 .or(team::join(database_pool, otps))
                 .or(submission::create(database_pool))
                 .or(submission::delete(database_pool))
-                .or(submission::list(database_pool)),
+                .or(submission::list(database_pool))
+                .or(upload::upload(database_pool)),
         )),
     )
 }
